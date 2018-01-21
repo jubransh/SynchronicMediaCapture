@@ -1,0 +1,220 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="SynchronicMediaCapture.CameraProperties" Collapsed="true">
+    <Position X="5.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>4ggIAAAAQAAEEAEQACMgAgRAIAAAAAAQLAAQgFEAAIA=</HashCode>
+      <FileName>CameraProperty.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SynchronicMediaCapture.CommandResult" Collapsed="true">
+    <Position X="7" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAABAIAAACAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>CommandResult.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SynchronicMediaCapture.Control">
+    <Position X="12" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAABAAAAQAEgAAIAAAAAAAAEAAIQAgAQAAAAA=</HashCode>
+      <FileName>Control.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SynchronicMediaCapture.Device" Collapsed="true">
+    <Position X="5.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIFCRwaGSKSECgAEAiAAAAQhIQIYDZIADAAQAFmASwE=</HashCode>
+      <FileName>Device.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SynchronicMediaCapture.DeviceInfo" Collapsed="true">
+    <Position X="7" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAECAAAAAAAAAAAAAAAABAAAAAAAAACAAAAAAAAAAA=</HashCode>
+      <FileName>DeviceInfo.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SynchronicMediaCapture.DeviceManager" Collapsed="true">
+    <Position X="8.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAABIBAAAAAAAAAAEAEAAAIAAAAAAAAAAAAAAAQgA=</HashCode>
+      <FileName>DeviceManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SynchronicMediaCapture.Events" Collapsed="true">
+    <Position X="5.25" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Events.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SynchronicMediaCapture.DeviceProperty" Collapsed="true">
+    <Position X="1.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AKAAAAAAAAAAAAEAAAAAAAAAAAAAACAAAAAAAAAAAgA=</HashCode>
+      <FileName>KsProperty.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SynchronicMediaCapture.PropsetidVidcapControl" Collapsed="true">
+    <Position X="1.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAABABAAAQAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>KsProperty.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SynchronicMediaCapture.VideoProcAmp" Collapsed="true">
+    <Position X="2.75" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>KsProperty.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SynchronicMediaCapture.CameraControl" Collapsed="true">
+    <Position X="0.5" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>KsProperty.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SynchronicMediaCapture.StreamConfiguration" Collapsed="true">
+    <Position X="7" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAABAAAABAAAAAAAAAAAAEAAAAgAAAAAACAAAAAAAAA=</HashCode>
+      <FileName>StreamConfiguration.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SynchronicMediaCapture.Types">
+    <Position X="10.75" Y="3.75" Width="2.75" />
+    <Compartments>
+      <Compartment Name="Nested Types" Collapsed="false" />
+    </Compartments>
+    <NestedTypes>
+      <Enum Name="SynchronicMediaCapture.Types.SourceGroupType" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Types.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+      <Struct Name="SynchronicMediaCapture.Types.FrameData" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Types.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Struct>
+      <Enum Name="SynchronicMediaCapture.Types.LogLevel" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Types.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+      <Struct Name="SynchronicMediaCapture.Types.SensorInfo" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Types.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Struct>
+      <Enum Name="SynchronicMediaCapture.Types.ControlType">
+        <TypeIdentifier>
+          <NewMemberFileName>Types.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+      <Enum Name="SynchronicMediaCapture.Types.Sensor" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Types.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+      <Enum Name="SynchronicMediaCapture.Types.Sensors" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Types.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+      <Enum Name="SynchronicMediaCapture.Types.Controls">
+        <TypeIdentifier>
+          <NewMemberFileName>Types.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+      <Enum Name="SynchronicMediaCapture.Types.Formats" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Types.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+      <Enum Name="SynchronicMediaCapture.Types.ControlName" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Types.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAABAAAAAAAAAAgAAAAAAAAQAAAAAA=</HashCode>
+      <FileName>Types.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Struct Name="SynchronicMediaCapture.KSIDENTIFIER" Collapsed="true">
+    <Position X="7" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAgQ=</HashCode>
+      <FileName>KsProperty.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="SynchronicMediaCapture.PROPSETID_VIDCAP" Collapsed="true">
+    <Position X="7" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAABAAAACAAAAAAAAAACAAAAAAAAACAAQ=</HashCode>
+      <FileName>KsProperty.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="SynchronicMediaCapture.KSPROPERTY_MEMBERSHEADER" Collapsed="true">
+    <Position X="8.75" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABAABAAAAAAAEAAAAAAAAAAAAAAAAABAAAAAAAAAAAA=</HashCode>
+      <FileName>KsProperty.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="SynchronicMediaCapture.KSPROPERTY_BOUNDS_LONG" Collapsed="true">
+    <Position X="8.75" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>KsProperty.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="SynchronicMediaCapture.KSPROPERTY_STEPPING_LONG" Collapsed="true">
+    <Position X="5.25" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAgAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAgA=</HashCode>
+      <FileName>KsProperty.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="SynchronicMediaCapture.KSPROPERTY_DESCRIPTION" Collapsed="true">
+    <Position X="7" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAgAAAAAAAAAAAAEAAAAAAAAAEAAAAAABAI=</HashCode>
+      <FileName>KsProperty.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="SynchronicMediaCapture.CapSourceKsMemberList" Collapsed="true">
+    <Position X="5.25" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAgAABAAAAAAAAABAA=</HashCode>
+      <FileName>KsProperty.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="SynchronicMediaCapture.KSPROPERTY_CAMERACONTROL_S" Collapsed="true">
+    <Position X="5.25" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAABAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAgAQACAAA=</HashCode>
+      <FileName>KsProperty.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Enum Name="SynchronicMediaCapture.VideoProcAmp_ControlValues" Collapsed="true">
+    <Position X="7" Y="7" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAUAAAAAAACCAAAAAAAABIACACABAAAgAARAAAAQEAA=</HashCode>
+      <FileName>KsProperty.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="SynchronicMediaCapture.CameraControl_ControlValues" Collapsed="true">
+    <Position X="5.25" Y="7" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABCQEAAAAIAARAAAABBAAAAQAIgAAQBAAAAIABIwCAA=</HashCode>
+      <FileName>KsProperty.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

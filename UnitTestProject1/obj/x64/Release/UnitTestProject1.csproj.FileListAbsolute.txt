@@ -1,0 +1,12 @@
+C:\Intel\tfs\ivcam\QA\DS5\SynchronicMediaCapture\UnitTestProject1\bin\x64\Release\UnitTestProject1.dll
+C:\Intel\tfs\ivcam\QA\DS5\SynchronicMediaCapture\UnitTestProject1\bin\x64\Release\UnitTestProject1.pdb
+C:\Intel\tfs\ivcam\QA\DS5\SynchronicMediaCapture\UnitTestProject1\bin\x64\Release\DepthCameras.WinUsb.Cli.dll
+C:\Intel\tfs\ivcam\QA\DS5\SynchronicMediaCapture\UnitTestProject1\bin\x64\Release\Microsoft.VisualStudio.QualityTools.UnitTestFramework.dll
+C:\Intel\tfs\ivcam\QA\DS5\SynchronicMediaCapture\UnitTestProject1\bin\x64\Release\SynchronicMediaCapture.dll
+C:\Intel\tfs\ivcam\QA\DS5\SynchronicMediaCapture\UnitTestProject1\bin\x64\Release\Windows.winmd
+C:\Intel\tfs\ivcam\QA\DS5\SynchronicMediaCapture\UnitTestProject1\bin\x64\Release\System.Runtime.WindowsRuntime.dll
+C:\Intel\tfs\ivcam\QA\DS5\SynchronicMediaCapture\UnitTestProject1\bin\x64\Release\SynchronicMediaCapture.pdb
+C:\Intel\tfs\ivcam\QA\DS5\SynchronicMediaCapture\UnitTestProject1\bin\x64\Release\System.Runtime.WindowsRuntime.xml
+C:\Intel\tfs\ivcam\QA\DS5\SynchronicMediaCapture\UnitTestProject1\obj\x64\Release\UnitTestProject1.csprojResolveAssemblyReference.cache
+C:\Intel\tfs\ivcam\QA\DS5\SynchronicMediaCapture\UnitTestProject1\obj\x64\Release\UnitTestProject1.dll
+C:\Intel\tfs\ivcam\QA\DS5\SynchronicMediaCapture\UnitTestProject1\obj\x64\Release\UnitTestProject1.pdb
