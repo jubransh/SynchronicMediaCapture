@@ -59,7 +59,48 @@ namespace UnitTestProject1
                 }
             }
         }
+        [TestMethod]
+        public void Depth_TEST_ONLY()
+        {
+            Device d1 = null;
+            DeviceManager dm = new DeviceManager();
+            var devices = dm.GetListOfConnectedDevices();
 
+            if (devices.Count == 0)
+                return;
+
+            if (devices.Count > 0)
+            {
+                d1 = devices[0]; //get first device 
+                d1.InitDevice(); // init device
+                d1.InitSensors(); // init device sensors
+
+                StreamConfiguration scIR = new StreamConfiguration(
+                    Types.Sensor.Depth,
+                    Types.Formats.Z,
+                    424, 240, 6);
+
+
+                //Get List Of Device Sensors
+                var sensors = d1.Sensors;
+
+                //test for AWG/ PWG/ASR/PSR
+                if (sensors.Count == 3)
+                {
+                    //Init And configure the IR sensor
+                    sensors[0].Init();
+                    sensors[0].Configure(scIR);
+                    sensors[0].FrameReader.FrameArrived += Depth_FrameReader_FrameArrived;
+
+                    //sensors[0].SensorType = Types.Sensor.IR
+                    sensors[0].Start();
+
+                    Thread.Sleep(7000);
+
+                    sensors[0].Stop();
+                }
+            }
+        }
         [TestMethod]
         public void TestStreamPerSensor_ColorAndDepth()
         {
@@ -143,6 +184,8 @@ namespace UnitTestProject1
                 d1.InitDevice(); // init device
                 d1.InitSensors(); // init device sensors
 
+                var ssss = d1.GetSerial();
+
                 StreamConfiguration scDepth = new StreamConfiguration(
                     Types.Sensor.Depth,
                     Types.Formats.Z,
@@ -167,7 +210,7 @@ namespace UnitTestProject1
                     //Init And configure the depth sensor
                     sensors[0].Init();
                     sensors[0].Configure(scDepth);
-                    sensors[0].FrameReader.FrameArrived += Depth_FrameReader_FrameArrived;
+                    sensors[0].FrameReader.FrameArrived += Depth_FrameReader_FrameArrived;                    
 
                     //Init And configure the IR sensor
                     sensors[1].Init();
@@ -242,14 +285,17 @@ namespace UnitTestProject1
                 //=============================================================================================
 
                 d1.InitDevice();
+                string fV = d1.GetFwVersion();
+                string sN = d1.GetSerial();
 
                 //Reset Camera
                 d1.SetU3Mode(true);
-                var result = d1.SendCommand(Environment.CurrentDirectory, "gvd");               
-                d1.ResetCamera();
+                //var result = d1.SendCommand(Environment.CurrentDirectory, "gvd");               
+                //d1.ResetCamera();
 
                 var ver = d1.GetFwVersion();
                 var serial = d1.GetSerial();
+
 
                 //Set Color Controls
                 bool res;
@@ -339,7 +385,7 @@ namespace UnitTestProject1
 
         private void Depth_FrameReader_FrameArrived(MediaFrameReader sender, MediaFrameArrivedEventArgs args)
         {
-            Logger.Debug("Depth");
+            Logger.Debug("Depth Frame Arrived");
         }
 
         private void FrameReader_FrameArrived(Windows.Media.Capture.Frames.MediaFrameReader sender, Windows.Media.Capture.Frames.MediaFrameArrivedEventArgs args)

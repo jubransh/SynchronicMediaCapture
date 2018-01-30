@@ -65,6 +65,13 @@ namespace SynchronicMediaCapture
         }
         public void Configure(StreamConfiguration sC)
         {
+            Logger.Debug(string.Format("{4} Configure Called with StramConfiguration {0}-{1}-{2}-{3}",
+                sC.Sensor,
+                sC.Format,
+                string.Format("{0}X{1}", sC.Width, sC.Height),
+                sC.FrameRate,
+                SensorType.ToString()));
+
             string errorMessage;
             MediaFrameSource mFS;
             MediaFrameFormat mFF;
@@ -141,7 +148,7 @@ namespace SynchronicMediaCapture
                     throw new Exception(errorMessage);
                 }
 
-                Logger.Debug(string.Format("Creating {0} FrameReader", SensorType));
+                Logger.Debug(string.Format("Creating {0} FrameReader with MFS", SensorType));
                 FrameReader = await _mC.CreateFrameReaderAsync(mFS);
             }).Wait();
 
@@ -160,12 +167,79 @@ namespace SynchronicMediaCapture
                  
             _isConfigured = false;
         }
+        public List<Control> GetSupportedControls()
+        {
+            List<Control> supportedControls = new List<Control>();
+
+            if(SensorType == Types.Sensor.Color)
+            {
+                //==============================================[ Color Controls ]==============================================
+                //Color Exposure Control
+                var controlCap = _mC.VideoDeviceController.Exposure.Capabilities;
+                if (controlCap.Supported)
+                    supportedControls.Add(new Control("Color Exposure", Types.GenericControl.EXPOSURE, Types.ControlType.STANDARD, Types.SourceGroupType.COLOR, controlCap.Max, controlCap.Min, controlCap.Default, controlCap.Step, controlCap.AutoModeSupported));
+
+                //color white balance
+                controlCap = _mC.VideoDeviceController.WhiteBalance.Capabilities;
+                if (controlCap.Supported)
+                    supportedControls.Add(new Control("White Balance", Types.GenericControl.WHITEBALANCE, Types.ControlType.STANDARD, Types.SourceGroupType.COLOR, controlCap.Max, controlCap.Min, controlCap.Default, controlCap.Step, controlCap.AutoModeSupported));
+
+                //Color Hue Control
+                controlCap = _mC.VideoDeviceController.Hue.Capabilities;
+                if (controlCap.Supported)
+                    supportedControls.Add(new Control("Hue", Types.GenericControl.HUE, Types.ControlType.STANDARD, Types.SourceGroupType.COLOR, controlCap.Max, controlCap.Min, controlCap.Default, controlCap.Step, controlCap.AutoModeSupported));
+
+                //Color Contrast Control
+                controlCap = _mC.VideoDeviceController.Contrast.Capabilities;
+                if (controlCap.Supported)
+                    supportedControls.Add(new Control("Contrast", Types.GenericControl.CONTRAST, Types.ControlType.STANDARD, Types.SourceGroupType.COLOR, controlCap.Max, controlCap.Min, controlCap.Default, controlCap.Step, controlCap.AutoModeSupported));
+
+                //Color Brightness Control
+                controlCap = _mC.VideoDeviceController.Brightness.Capabilities;
+                if (controlCap.Supported)
+                    supportedControls.Add(new Control("Brightness", Types.GenericControl.BRIGHTNESS, Types.ControlType.STANDARD, Types.SourceGroupType.COLOR, controlCap.Max, controlCap.Min, controlCap.Default, controlCap.Step, controlCap.AutoModeSupported));
+
+                //Color BacklightCompensation Control
+                controlCap = _mC.VideoDeviceController.BacklightCompensation.Capabilities;
+                if (controlCap.Supported)
+                    supportedControls.Add(new Control("Brightness", Types.GenericControl.BACKLIGHT_COMPENSATION, Types.ControlType.STANDARD, Types.SourceGroupType.COLOR, controlCap.Max, controlCap.Min, controlCap.Default, controlCap.Step, controlCap.AutoModeSupported));
+            }
+
+            //==============================================[ Depth XU Controls ]==============================================
+            CameraProperties cp = new CameraProperties(_mC.VideoDeviceController);
+
+            //try to get control, if exception is thrown then the control is not supported
+            try
+            {
+                //cp.GetControl(Types.ControlName.DEPTH_AE);
+                supportedControls.Add(new Control("Depth Auto Exposure", Types.GenericControl.AUTO_EXPOSURE, Types.ControlType.XU, Types.SourceGroupType.DEPTH, 1, 0, 1, 1, true));
+            }
+            catch { /*do nothing*/}
+
+            try
+            {
+                //cp.GetManualLaserPower();
+                // supportedControls.Add(new Control("Manual Laser Power", Types.Controls.LaserPower, Types.ControlType.XU, Types.SourceGroupType.DEPTH, 1, 0, 1, 1, true));
+                // supportedControls.Add(new Control("Laser Power", Types.Controls.LaserPowerOnOff, Types.ControlType.XU, Types.SourceGroupType.DEPTH, 2, 0, 1, 1, true));
+            }
+            catch { /*do nothing*/}
+
+            try
+            {
+                //cp.GetDepthExposure();
+                //supportedControls.Add(new Control("Depth Exposure", Types.Controls.DepthExposure, Types.ControlType.XU, Types.SourceGroupType.DEPTH, 166000, 20, 80, 10, true));
+            }
+            catch { /*do nothing*/}
+
+            return supportedControls;
+        }
+
         public bool SetControl(Types.GenericControl control, int val)
         {
             return _cP.SetControl(control, SensorType, val);
         }
         public double GetControl(Types.GenericControl control)
-        {
+        {//
             Logger.Debug("Trying To Get " + control.ToString() +" Control");
             return _cP.GetControl(control, SensorType);
         }
@@ -222,6 +296,7 @@ namespace SynchronicMediaCapture
 
             _activeStream = false;
         }
+
         public void RegisterPythonListener(Delegate frameArriveHandler)
         {
             Logger.Debug("Registering Python callback");
@@ -231,7 +306,13 @@ namespace SynchronicMediaCapture
         public void RegisterFramesCallback()
         {
             Logger.Debug(string.Format("Registering Frames callback for {0}", DisplayName));
-            FrameReader.FrameArrived += MFR_FrameArrived;
+            if(FrameReader != null)
+                FrameReader.FrameArrived += MFR_FrameArrived;
+            else
+            {
+                Logger.Debug(DisplayName + " Frame Reader = Null");
+                return;
+            }
             Logger.Debug( DisplayName +  " MediaFrameReader was registered");            
         }
         public Types.FrameData ExtractFrameData(MediaFrameReader sender)
@@ -268,7 +349,6 @@ namespace SynchronicMediaCapture
             catch (Exception ex)
             {
             }
-
             var systemTimeStamp = frame?.SystemRelativeTime.Value.TotalMilliseconds;
             var fmt = Types.GetFormatFromMediaFrameFormat(frame.Format);
             var sensor = Types.GetSensorTypeFromFormat(fmt);
@@ -283,8 +363,9 @@ namespace SynchronicMediaCapture
             _tempData.frameRate = fps;
             _tempData.sw_timeStamp = string.Format("{0}", systemTimeStamp);
             _tempData.hw_timeStamp = string.Format("{0}", HwTimeStamp);
-            _tempData.ActualData = frame.BufferMediaFrame.Buffer.ToArray();
+            _tempData.ActualData = null;//frame.BufferMediaFrame.Buffer.ToArray();
 
+            frame.Dispose();
             return _tempData;
         }
 
@@ -292,7 +373,6 @@ namespace SynchronicMediaCapture
         //================================================================= Private methods ======================================================================
         private void MFR_FrameArrived(MediaFrameReader sender, MediaFrameArrivedEventArgs args)
         {
-            //Console.WriteLine(this.SensorType);
             var frameData = ExtractFrameData(sender);
             paramsToPass[0] = frameData;
 
@@ -310,7 +390,7 @@ namespace SynchronicMediaCapture
                     pythonFunc?.DynamicInvoke(frameData);
                     Logger.Debug("Invoke Done = " + ts);
                 }
-
+                
                 Logger.Debug("Frame Number = " + frameData.FrameId);
             }
             catch (Exception ex)

@@ -263,6 +263,8 @@ namespace SynchronicMediaCapture
         }
         public XUCommandRes SendCommand(string command, int[] args)
         {
+            Logger.Debug(string.Format("Starting SendCommand({0}) Type = {1}",
+                command, _vC_Depth == null ? "Null" :  "Not Null"));
             bool isCompletedOk;
             try
             {

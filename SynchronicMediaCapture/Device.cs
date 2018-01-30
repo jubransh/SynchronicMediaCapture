@@ -23,6 +23,8 @@ namespace SynchronicMediaCapture
         int depthIndex;
         int iRIndex;
         int fisheyeIndex;
+        CommandResult gvdData;
+        string xmlLocation;
 
         public List<Sensor> Sensors { get; private set; } 
 
@@ -51,7 +53,6 @@ namespace SynchronicMediaCapture
         public event Events.DataRecieved OnDataReceived;
         Delegate pythonFunc;
 
-
         public Device(string id/*MediaCapture mC, /*MediaFrameSourceGroup selectedGroup*/)
         {
             Sensors = new List<Sensor>();
@@ -71,13 +72,19 @@ namespace SynchronicMediaCapture
 
             if (_depthSourceGroup != null && _sharedSourceGroup == null) //only depth device is connected
             {
+                Logger.Debug("_depthSourceGroup != null && _sharedSourceGroup == null");
                 Sensor sDepth = new Sensor(_mC, Types.Sensor.Depth, _depthSourceGroup, _depthSourceGroup);
+                Logger.Debug("Depth Sensor Created");
                 Sensor sIR = new Sensor(_mC, Types.Sensor.IR, _depthSourceGroup, _depthSourceGroup);
+                Logger.Debug("IR Sensor Created");
                 Sensors.Add(sDepth);
+                Logger.Debug("Depth Sensor Added to Sensors List");
                 Sensors.Add(sIR);
+                Logger.Debug("IR Sensor Added to Sensors List");
             }
             else // not only depth 
             {
+                Logger.Debug("not only depth");
                 //Add depth sensors           
                 Sensor sDepth = new Sensor(_mC, Types.Sensor.Depth, _sharedSourceGroup, _depthSourceGroup);
                 Sensor sIR = new Sensor(_mC, Types.Sensor.IR, _sharedSourceGroup, _depthSourceGroup);
@@ -158,8 +165,9 @@ namespace SynchronicMediaCapture
             Logger.Error(string.Format("Error: {0} Sensor was Not Found !!!"));
             return null;
         }        
-        public void InitDevice()
+        public void InitDevice(string xmlLocation = "default")
         {
+            this.xmlLocation = xmlLocation.ToLower().Equals("default") ? Environment.CurrentDirectory : xmlLocation;
             Logger.PrintTitle(" Init Device ");
             //validate that list of source info is not null
             //if (listOfSourceInfo == null)
@@ -281,17 +289,21 @@ namespace SynchronicMediaCapture
             // ================================================================================================
 
             //create new camera property class
-            if (_colorMC != null && _depthMC != null)
-                _CameraProperty = new CameraProperties(_depthMC?.VideoDeviceController, _colorMC?.VideoDeviceController, null);
+            if (_colorMC != null && _depthMC != null)            
+                _CameraProperty = new CameraProperties(_depthMC.VideoDeviceController, _colorMC.VideoDeviceController, null);            
             else if (_depthMC != null)
-                _CameraProperty = new CameraProperties(_depthMC?.VideoDeviceController);
+                _CameraProperty = new CameraProperties(_depthMC.VideoDeviceController);
 
             //set the selected Group and media capture
             _selectedGroup = _sharedSourceGroup != null ? _sharedSourceGroup : _depthSourceGroup;
             _mC = _sharedSourceGroup != null ? _mC : _depthMC;
 
             //print to log
-            Logger.Debug("Selected Group is: " + _selectedGroup.DisplayName);            
+            Logger.Debug("Selected Group is: " + _selectedGroup.DisplayName);
+
+            //Getting Device Version Data GVD
+            Logger.Debug("Getting Device Version Data GVD");
+            gvdData = SendCommand("gvd");
 
             Logger.PrintTitle("");
         }
@@ -568,53 +580,84 @@ namespace SynchronicMediaCapture
         }
         public string GetFwVersion()
         {
-            Logger.PrintTitle("Getting FW Version");
-            var res = _CameraProperty.SendCommand("gvd", null);
-            if (res.IsCompletedOk == false)
-            {
-                Logger.Error("GVD command was not completed ok");
-                return "N/A";
-            }
-            Logger.Debug("GVD Command was Completed Ok");
+            return GetDataFromGVD("FunctionalPayloadVersion:");
+            //try
+            //{
+            //    Logger.PrintTitle("Getting FW Version");
 
-            var rows = res.StringResult.Split('\n');
-            var fwVersionKey = "FW Version: ";
-            foreach (var item in rows)
-            {
-                if (item.ToLower().StartsWith(fwVersionKey.ToLower()))
-                {
-                    Logger.Debug("Returned FW Version is: " + item);
-                    Logger.PrintTitle();
-                    return item.Replace(fwVersionKey, "").Replace('-', '.');
-                }
-            }
-            Logger.Debug("FW Version key not found into the returned data from GVD command");
-            Logger.PrintTitle();
-            return "N/A";            
+            //    var res = _CameraProperty.SendCommand("gvd", null);
+            //    if (res?.IsCompletedOk == false)
+            //    {
+            //        Logger.Error("GVD command was not completed ok");
+            //        return "N/A";
+            //    }
+            //    Logger.Debug("GVD Command was Completed Ok");
+
+            //    var rows = res.StringResult.Split('\n');
+            //    var fwVersionKey = "FW Version: ";
+            //    foreach (var item in rows)
+            //    {
+            //        if (item.ToLower().StartsWith(fwVersionKey.ToLower()))
+            //        {
+            //            Logger.Debug("Returned FW Version is: " + item);
+            //            Logger.PrintTitle();
+            //            return item.Replace(fwVersionKey, "").Replace('-', '.');
+            //        }
+            //    }
+
+            //}
+            //catch (Exception exp)
+            //{
+            //    Logger.Debug("_CameraProperty.SendCommand Failed On: " + exp.Message);
+            //}
+            //Logger.Debug("FW Version key not found into the returned data from GVD command");
+            //Logger.PrintTitle();
+            //return "N/A";            
         }
-        public string GetSerial()
-        {            
-            Logger.PrintTitle("Getting ASIC Serial Number");
-            var res = _CameraProperty.SendCommand("gvd", null);
-            if (res.IsCompletedOk == false)
-            {
-                Logger.Error("GVD command was not completed ok");
+        private string GetDataFromGVD(string key)
+        {
+            ////workingDir = workingDir.Equals("") ? Environment.CurrentDirectory : workingDir;
+            //string workingDir = xmlLocation;
+            //Logger.PrintTitle("Getting ASIC Serial Number");
+            //Logger.Error("Current Dir is: " + workingDir);
+            ////var res = _CameraProperty.SendCommand("gvd", null);
+            //var res = SendCommand(/*workingDir,*/ "gvd");
+            //if (res.ByteArray.Length == 0)
+            //{
+            //    Logger.Error("GVD command was not completed ok");
+            //    return "000000000";
+            //}
+            //var rows = res.FormatedString.Split('\n');
+            if (gvdData == null)
                 return "N/A";
-            }
-            var rows = res.StringResult.Split('\n');
-            var serialKey = "Asic Serial: ";
+
+            var rows = gvdData.FormatedString.Split('\n');
+
+            //if (res.IsCompletedOk == false)
+            //{
+            //    Logger.Error("GVD command was not completed ok");
+            //    return "N/A";
+            //}
+            //var rows = res.StringResult.Split('\n');
+            var serialKey = key;
             foreach (var item in rows)
             {
                 if (item.ToLower().StartsWith(serialKey.ToLower()))
                 {
-                    Logger.Debug("Returned ASIC Serial is: " + item);
+                    Logger.Debug(string.Format("Returned {0} is: {1}",key, item));
                     Logger.PrintTitle();
-                    return item.Replace(serialKey, "").Replace("-", "");
+                    return item.Replace(serialKey, "").Replace("-", "").Replace(" ", "");
                 }
             }
-            Logger.Debug("Serial key not found into the returned data from GVD command");
+            Logger.Debug("key not found into the returned data from GVD command");
             Logger.PrintTitle();
             return "N/A";
+
+        }
+
+        public string GetSerial(/*string workingDir = ""*/)
+        {
+            return GetDataFromGVD("AsicModuleSerial:");
         }
         public bool ResetCamera()
         {
@@ -690,16 +733,13 @@ namespace SynchronicMediaCapture
 
             return listOfSensors;
         }
-        public CommandResult SendCommand(string xmlLocation, string command)
+        public CommandResult SendCommand(/*string xmlLocation,*/ string command)
         {
             var DS5GUID = "08090549CE7841DCA0FB1BD66694BB0C";
             Guid guid = new Guid(DS5GUID);
-            Console.WriteLine("1");
             var winUSBDevice = new HWMonitorDevice(VID, PID, guid, 1); //setting of the command.. like Sam's code
-            Console.WriteLine("2");
             var xml_path = Path.Combine(xmlLocation, "CommandsDS5.xml");
             var parser = new CommandsXmlParser(xml_path); //the xml file where you find all commands availble
-            Console.WriteLine("3");
             return parser.SendCommand(winUSBDevice, command); //insert the HW command, the same as typing in the Terminal
         }
 

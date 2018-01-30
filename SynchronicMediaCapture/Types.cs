@@ -139,10 +139,10 @@ namespace SynchronicMediaCapture
             //Depth
             Z,
             Y,
-            ZY,
-            CALIBRATION,
+            ZY,            
             L8R8,
             UYVY,
+            CALIBRATION,
 
             //Color
             RGB24,

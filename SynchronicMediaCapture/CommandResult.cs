@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace SynchronicMediaCapture
 {
     public class XUCommandRes
-    {
+    {//
         public bool IsCompletedOk { get; private set; }
         public string StringResult { get; private set; }
         public byte[] BytesResult { get; private set; }

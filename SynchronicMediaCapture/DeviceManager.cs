@@ -115,6 +115,7 @@ namespace SynchronicMediaCapture
                 case "Intel RS400 Cameras":
                     return Types.SourceGroupType.SHARED;
 
+                case "Intel(R) RealSense(TM) 410 Depth":
                 case "Intel(R) RealSense(TM) 415 Depth":
                 case "Intel(R) RealSense(TM) 415 with RGB Module Depth":
                 case "Intel(R) RealSense(TM) 430 Depth":
@@ -131,6 +132,7 @@ namespace SynchronicMediaCapture
                     return Types.SourceGroupType.FISHEYE;
 
                 default:
+                    Logger.Debug("MediaFrameSourceGroup is: " + sG.DisplayName);
                     return Types.SourceGroupType.UNKNOWN;
             }
         }

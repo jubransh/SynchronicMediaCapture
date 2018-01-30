@@ -10,6 +10,8 @@ namespace SynchronicMediaCapture
     {        
         public string ControlName { get; private set; }
         public Types.Controls Property { get; private set; }
+        public Types.GenericControl GProperty { get; private set; }
+
         public Types.ControlType Type { get; private set; }
         public Types.SourceGroupType BelongTo { get; private set; }
         public double Max { get; private set; }
@@ -31,6 +33,18 @@ namespace SynchronicMediaCapture
             Step = step;
             AutoCapable = autoCap;
         }
-       
+        public Control(string name, Types.GenericControl property, Types.ControlType type, Types.SourceGroupType Sensor, double max, double min, double def, double step, bool autoCap)
+        {
+            ControlName = name;
+            GProperty = property;
+            Type = type;
+            BelongTo = Sensor;
+            Max = max;
+            Min = min;
+            Default = def;
+            Step = step;
+            AutoCapable = autoCap;
+        }
+
     }
 }
