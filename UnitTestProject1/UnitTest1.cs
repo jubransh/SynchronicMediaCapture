@@ -272,6 +272,10 @@ namespace UnitTestProject1
             DeviceManager dm = new DeviceManager();
             var devices = dm.GetListOfConnectedDevices();
 
+            DeviceManager dm2 = new DeviceManager();
+            var devices2 = dm2.GetListOfConnectedDevices();
+
+
             if (devices.Count == 0)
                 return;
 
@@ -288,7 +292,13 @@ namespace UnitTestProject1
                 string fV = d1.GetFwVersion();
                 string sN = d1.GetSerial();
 
-                //Reset Camera
+                ////Reset
+                //var res1 = d1.SendXuCommand("14 00 AB CD 20 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00");
+
+                //Get Depth Calibration
+                var res1 = d1.SendXuCommand("14 00 AB CD 15 00 00 00 1f 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00");
+                var dd = res1.BytesResult;
+                //Reset Camera 
                 d1.SetU3Mode(true);
                 //var result = d1.SendCommand(Environment.CurrentDirectory, "gvd");               
                 //d1.ResetCamera();

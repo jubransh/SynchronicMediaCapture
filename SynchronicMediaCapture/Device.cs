@@ -26,6 +26,7 @@ namespace SynchronicMediaCapture
         CommandResult gvdData;
         string xmlLocation;
 
+
         public List<Sensor> Sensors { get; private set; } 
 
         List<Types.FrameData> _storedDepthFrames;
@@ -732,6 +733,10 @@ namespace SynchronicMediaCapture
             }
 
             return listOfSensors;
+        }
+        public XUCommandRes SendXuCommand(string command)
+        {
+            return _CameraProperty.SendCommand(command);
         }
         public CommandResult SendCommand(/*string xmlLocation,*/ string command)
         {

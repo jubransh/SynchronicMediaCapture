@@ -348,9 +348,48 @@ namespace SynchronicMediaCapture
                 //write to log                 
                 return new XUCommandRes(false, "", null);
             }
-        }        
+        }
+        public XUCommandRes SendCommand(string commandBytesString)
+        {
+            try
+            {
+                byte[] bufferToSend;
+                var bytesStrings = commandBytesString.Split(' ');
+                bufferToSend = new byte[bytesStrings.Length];
+                for(int i=0; i< bufferToSend.Length; i++)                
+                {
+                    bufferToSend[i] = Convert.ToByte(bytesStrings[i], 16);
+                }
+               
+                byte[] largeArray = new byte[1024];
+                Array.Copy(bufferToSend, 0, largeArray, 0, bufferToSend.Length);
 
-        
+                //Send xu control 
+                var ControlId = (int)XU_Controls.DS5_HWMONITOR;
+                _vC_Depth.SetDeviceProperty(string.Format("{0} {1}", Ds5_XU_GUID, ControlId), largeArray);
+
+                //get result from sent command
+                var res = _vC_Depth.GetDeviceProperty(string.Format("{0} {1}", Ds5_XU_GUID, ControlId));
+                var resArray = (byte[])res;
+
+                //read the buffer size from the end of the large buffer
+                var size = new byte[4];
+                Array.Copy(resArray, resArray.Length - 1 - 4, size, 0, 4);
+                Array.Reverse(size);
+                int arraySize = BitConverter.ToInt32(size, 0);
+
+                byte[] data = new byte[arraySize];
+                Array.Copy(resArray, 4, data, 0, data.Length);
+                return new XUCommandRes(true, "", data);
+            }
+            catch (Exception ex)
+            {
+                //write to log                 
+                return new XUCommandRes(false, "", null);
+            }
+        }
+
+
         public bool SetControl(Types.GenericControl control, Types.Sensor sensorType, int value)
         {
             Types.Control specControl = ConvertGenericControlToSpec(control, sensorType);
