@@ -14,4 +14,3 @@ Version 1.13:
 
 Version 1.12:
 	- fixed Frames Drops Issue in C# synchronicMediaCapture.dll Layer
-
