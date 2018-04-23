@@ -290,22 +290,36 @@ namespace SynchronicMediaCapture
             // ================================================================================================
 
             //create new camera property class
-            if (_colorMC != null && _depthMC != null)            
-                _CameraProperty = new CameraProperties(_depthMC.VideoDeviceController, _colorMC.VideoDeviceController, null);            
+            if (_colorMC != null && _depthMC != null)
+            {
+                Logger.Debug("_colorMC != null && _depthMC != null");
+                _CameraProperty = new CameraProperties(_depthMC.VideoDeviceController, _colorMC.VideoDeviceController, null);
+            }
             else if (_depthMC != null)
+            {
+                Logger.Debug("_depthMC is not null");
                 _CameraProperty = new CameraProperties(_depthMC.VideoDeviceController);
+            }
+            else if (_colorMC != null)
+            {
+                Logger.Debug("_colorMC is not null");
+                _CameraProperty = new CameraProperties(_colorMC.VideoDeviceController);
+            }
 
             //set the selected Group and media capture
             _selectedGroup = _sharedSourceGroup != null ? _sharedSourceGroup : _depthSourceGroup;
             _mC = _sharedSourceGroup != null ? _mC : _depthMC;
 
+
             //print to log
-            Logger.Debug("Selected Group is: " + _selectedGroup.DisplayName);
+            Logger.Debug("Selected Group is: " + _selectedGroup?.DisplayName);
 
             //Getting Device Version Data GVD
-            Logger.Debug("Getting Device Version Data GVD");
-            gvdData = SendCommand("gvd");
-
+            if (_selectedGroup.DisplayName.ToLower().Contains("intel"))
+            {
+                Logger.Debug("Getting Device Version Data GVD");
+                gvdData = SendCommand("gvd");
+            }
             Logger.PrintTitle("");
         }
         public List<Control> GetSupportedControls()
@@ -542,6 +556,18 @@ namespace SynchronicMediaCapture
             Logger.Debug("Registering Python callback");
             pythonFunc = frameArriveHandler;
         }
+        int framesCnt = 0;
+        public void RegisterNonIntelCameraFramesCallback()
+        {
+            Logger.Debug("Registering  Non-Intel Camera Frames callback");
+            int cnt = 1;
+            foreach (var mFR in listOfMediaFrameReader)
+            {
+                mFR.FrameArrived += MFR_FrameArrived_NonIntel;
+                Logger.Debug("MediaFrameReader number " + cnt++ + " was registered");
+            }
+        }
+
         public void RegisterFramesCallback()
         {
             Logger.Debug("Registering Frames callback");
@@ -824,6 +850,34 @@ namespace SynchronicMediaCapture
             }
             return null;
         }
+        private void MFR_FrameArrived_NonIntel(MediaFrameReader sender, MediaFrameArrivedEventArgs args)
+        {
+            Logger.Debug("Frame Recieved");
+            Types.FrameData _tempData = new Types.FrameData();
+            var frame = sender.TryAcquireLatestFrame();
+
+            var systemTimeStamp = frame?.SystemRelativeTime.Value.TotalMilliseconds;
+            var fmt = Types.GetFormatFromMediaFrameFormat(frame.Format);
+            var sensor = Types.GetSensorTypeFromFormat(fmt);
+            var reso = string.Format("{0}X{1}", frame.Format.VideoFormat.Width, frame.Format.VideoFormat.Height);
+            var fps = (int)(frame.Format.FrameRate.Numerator / Convert.ToDouble(frame.Format.FrameRate.Denominator));
+            //var frameCnt = IncFrameCounter(fmt);
+
+            _tempData.FrameId = framesCnt++;
+            _tempData.sensorSource = sensor;
+            _tempData.format = fmt;
+            _tempData.resolution = reso;
+            _tempData.frameRate = fps;
+            _tempData.sw_timeStamp = string.Format("{0}", systemTimeStamp);
+            _tempData.hw_timeStamp = "000000000";
+            _tempData.ActualData = frame.BufferMediaFrame.Buffer.ToArray();
+
+
+            //Raise Done Event       
+            Logger.Debug("Trying To Raise Event ");
+            RaiseDataReceivedEvent(this, new Events.TestEventArgs(_tempData));
+        }
+
         private void MFR_FrameArrived(MediaFrameReader sender, MediaFrameArrivedEventArgs args)
         {
             Logger.Debug("Frame Recieved");
@@ -892,6 +946,7 @@ namespace SynchronicMediaCapture
             newData.format = origData.format;
             newData.FrameId = origData.FrameId;
             newData.hw_timeStamp = origData.hw_timeStamp;
+            newData.sw_timeStamp = origData.sw_timeStamp;
             newData.mmCounter = origData.mmCounter;
             newData.usbCounter = origData.usbCounter;
             newData.x = origData.x;

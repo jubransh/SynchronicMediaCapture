@@ -4,6 +4,6 @@ C:\Intel\tfs\ivcam\QA\DS5\SynchronicMediaCapture\SynchronicMediaCapture\bin\x64\
 C:\Intel\tfs\ivcam\QA\DS5\SynchronicMediaCapture\SynchronicMediaCapture\bin\x64\Debug\System.Runtime.WindowsRuntime.dll
 C:\Intel\tfs\ivcam\QA\DS5\SynchronicMediaCapture\SynchronicMediaCapture\bin\x64\Debug\Windows.winmd
 C:\Intel\tfs\ivcam\QA\DS5\SynchronicMediaCapture\SynchronicMediaCapture\bin\x64\Debug\System.Runtime.WindowsRuntime.xml
+C:\Intel\tfs\ivcam\QA\DS5\SynchronicMediaCapture\SynchronicMediaCapture\obj\x64\Debug\SynchronicMediaCapture.csprojResolveAssemblyReference.cache
 C:\Intel\tfs\ivcam\QA\DS5\SynchronicMediaCapture\SynchronicMediaCapture\obj\x64\Debug\SynchronicMediaCapture.dll
 C:\Intel\tfs\ivcam\QA\DS5\SynchronicMediaCapture\SynchronicMediaCapture\obj\x64\Debug\SynchronicMediaCapture.pdb
-C:\Intel\tfs\ivcam\QA\DS5\SynchronicMediaCapture\SynchronicMediaCapture\obj\x64\Debug\SynchronicMediaCapture.csprojResolveAssemblyReference.cache

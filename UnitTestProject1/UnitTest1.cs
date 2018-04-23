@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Collections.Generic;
 using System.Threading;
 using Windows.Media.Capture.Frames;
+using System.Linq;
 
 namespace UnitTestProject1
 {
@@ -29,14 +30,27 @@ namespace UnitTestProject1
 
             if (devices.Count > 0)
             {
-                d1 = devices[0]; //get first device 
+                d1 = devices[0]; //get first device            
                 d1.InitDevice(); // init device
                 d1.InitSensors(); // init device sensors
 
+                d1.ResetCamera();
+                Thread.Sleep(5000);
+
+                //resacan devices *************************
+                d1.Close();
+                d1 = null;
+                dm = new DeviceManager();
+                devices = dm.GetListOfConnectedDevices();
+                d1 = devices[0]; //get first device            
+                d1.InitDevice(); // init device
+                d1.InitSensors(); // init device sensors
+                //******************************************
+
                 StreamConfiguration scIR = new StreamConfiguration(
                     Types.Sensor.IR,
-                    Types.Formats.Y,
-                    640, 480, 30);
+                    Types.Formats.UYVY,
+                    424, 240, 15);
 
 
                 //Get List Of Device Sensors
@@ -78,8 +92,7 @@ namespace UnitTestProject1
                 StreamConfiguration scIR = new StreamConfiguration(
                     Types.Sensor.Depth,
                     Types.Formats.Z,
-                    424, 240, 6);
-
+                    640, 480, 90);
 
                 //Get List Of Device Sensors
                 var sensors = d1.Sensors;
@@ -95,7 +108,7 @@ namespace UnitTestProject1
                     //sensors[0].SensorType = Types.Sensor.IR
                     sensors[0].Start();
 
-                    Thread.Sleep(7000);
+                    Thread.Sleep(10000);
 
                     sensors[0].Stop();
                 }
@@ -186,14 +199,14 @@ namespace UnitTestProject1
 
                 var ssss = d1.GetSerial();
 
-                StreamConfiguration scDepth = new StreamConfiguration(
-                    Types.Sensor.Depth,
-                    Types.Formats.Z,
-                    640, 480, 30);
-
                 StreamConfiguration scIR = new StreamConfiguration(
                     Types.Sensor.IR,
                     Types.Formats.Y,
+                    640, 480, 30);
+
+                StreamConfiguration scDepth = new StreamConfiguration(
+                    Types.Sensor.Depth,
+                    Types.Formats.Z,
                     640, 480, 30);
 
                 StreamConfiguration scColor = new StreamConfiguration(
@@ -222,41 +235,41 @@ namespace UnitTestProject1
                     sensors[2].Configure(scColor);
                     sensors[2].FrameReader.FrameArrived += Color_FrameReader_FrameArrived;
 
-                    //set color controls
-                    var res = sensors[2].SetControl(Types.GenericControl.HUE, 5);
-                    var val = sensors[2].GetControl(Types.GenericControl.HUE);
+                    ////set color controls
+                    //var res = sensors[2].SetControl(Types.GenericControl.HUE, 5);
+                    //var val = sensors[2].GetControl(Types.GenericControl.HUE);
 
-                    res = sensors[2].SetControl(Types.GenericControl.AUTO_EXPOSURE_PRIORITY, 1);
-                    val = sensors[2].GetControl(Types.GenericControl.AUTO_EXPOSURE_PRIORITY);
+                    //res = sensors[2].SetControl(Types.GenericControl.AUTO_EXPOSURE_PRIORITY, 1);
+                    //val = sensors[2].GetControl(Types.GenericControl.AUTO_EXPOSURE_PRIORITY);
 
 
-                    //set depth control example
-                    val = sensors[0].GetControl(Types.GenericControl.AUTO_EXPOSURE);
-                    res = sensors[0].SetControl(Types.GenericControl.AUTO_EXPOSURE, 1);
-                    val = sensors[0].GetControl(Types.GenericControl.AUTO_EXPOSURE);
+                    ////set depth control example
+                    //val = sensors[0].GetControl(Types.GenericControl.AUTO_EXPOSURE);
+                    //res = sensors[0].SetControl(Types.GenericControl.AUTO_EXPOSURE, 1);
+                    //val = sensors[0].GetControl(Types.GenericControl.AUTO_EXPOSURE);
 
-                    val = sensors[0].GetControl(Types.GenericControl.EXPOSURE);
-                    res = sensors[0].SetControl(Types.GenericControl.EXPOSURE, 20);
-                    val = sensors[0].GetControl(Types.GenericControl.EXPOSURE);
+                    //val = sensors[0].GetControl(Types.GenericControl.EXPOSURE);
+                    //res = sensors[0].SetControl(Types.GenericControl.EXPOSURE, 20);
+                    //val = sensors[0].GetControl(Types.GenericControl.EXPOSURE);
 
-                    //val = sensors[0].GetControl(Types.GenericControl.LASER_POWER_MODE);
-                    //res = sensors[0].SetControl(Types.GenericControl.LASER_POWER_MODE, 1);
-                    //val = sensors[0].GetControl(Types.GenericControl.LASER_POWER_MODE);
+                    ////val = sensors[0].GetControl(Types.GenericControl.LASER_POWER_MODE);
+                    ////res = sensors[0].SetControl(Types.GenericControl.LASER_POWER_MODE, 1);
+                    ////val = sensors[0].GetControl(Types.GenericControl.LASER_POWER_MODE);
 
-                    //val = sensors[0].GetControl(Types.GenericControl.MANUAL_LASER_POWER);
-                    //res = sensors[0].SetControl(Types.GenericControl.MANUAL_LASER_POWER, 30);
-                    //val = sensors[0].GetControl(Types.GenericControl.MANUAL_LASER_POWER);
+                    ////val = sensors[0].GetControl(Types.GenericControl.MANUAL_LASER_POWER);
+                    ////res = sensors[0].SetControl(Types.GenericControl.MANUAL_LASER_POWER, 30);
+                    ////val = sensors[0].GetControl(Types.GenericControl.MANUAL_LASER_POWER);
 
-                    res = sensors[0].SetControl(Types.GenericControl.GAIN, 17);
-                    val = sensors[0].GetControl(Types.GenericControl.GAIN);
-                    //set Get Example - depth controls
+                    //res = sensors[0].SetControl(Types.GenericControl.GAIN, 17);
+                    //val = sensors[0].GetControl(Types.GenericControl.GAIN);
+                    ////set Get Example - depth controls
 
                     //sensors[0].SensorType = Types.Sensor.IR
                     sensors[0].Start();
                     sensors[1].Start();
                     sensors[2].Start();
 
-                    Thread.Sleep(2000);
+                    Thread.Sleep(5000);
 
                     sensors[0].Stop();
                     sensors[1].Stop();
@@ -265,6 +278,54 @@ namespace UnitTestProject1
             }
         }
 
+        [TestMethod]
+        public void GeneralDeviceTest()
+        {
+            Device device = null;
+            DeviceManager dm = new DeviceManager();
+            var devices = dm.GetListOfConnectedDevices();
+
+            if (devices.Count == 0)
+                return;
+
+            device = devices[0];
+            device.InitDevice();
+
+            StreamConfigurations sCs = new StreamConfigurations();
+
+            StreamConfiguration sC = new StreamConfiguration(
+                Types.Sensor.Color,
+                Types.Formats.YUY2,
+                1280, 720, 30);
+
+            sCs.Append(sC);
+
+            device.ConfigureStream(sCs.GetListOfStreamConfigurations());
+            device.OnDataReceived += Frame_Arrived;
+            device.RegisterNonIntelCameraFramesCallback();
+            device.StartStreaming();
+            Thread.Sleep(10000);
+            device.StopStreaming();
+            device.Close();
+        }
+
+        private void Frame_Arrived(object source, Events.TestEventArgs e)
+        {
+            Logger.Debug("############### " + e.GetInfo().format);
+            var ts = e.GetInfo().sw_timeStamp;
+            Logger.Debug(ts);
+        }
+
+        [TestMethod]
+        public void DepthControlTest()
+        {
+            DeviceManager dm = new DeviceManager();
+            var device = dm.GetListOfConnectedDevices()[0];
+            device.InitDevice();
+            device.InitSensors();
+            var controlValue = device.GetControl(Types.GenericControl.LASER_POWER_MODE, Types.Sensor.Depth);
+
+        }
         [TestMethod]
         public void TestStreamPerDevice()
         {
@@ -285,7 +346,6 @@ namespace UnitTestProject1
                 //d1.InitSensors();
                
                 //================ Example about how to run by sensor and not by device =======================
-
                 //=============================================================================================
 
                 d1.InitDevice();
@@ -390,12 +450,27 @@ namespace UnitTestProject1
 
         private void IR_FrameReader_FrameArrived(MediaFrameReader sender, MediaFrameArrivedEventArgs args)
         {
-            Logger.Debug("IR");
+            var frame = sender.TryAcquireLatestFrame();
+            var fmt = frame.Format;
+            var intelCaptureTiming = "2BF10C23-BF48-4C54-B1F9-9BB19E70DB05";
+            Types.REAL_SENSE_RS400_DEPTH_METADATA_INTEL_CAPTURE_TIME intelCaptureTimingMD = new Types.REAL_SENSE_RS400_DEPTH_METADATA_INTEL_CAPTURE_TIME();
+            var properties = frame.Properties;
+            var intelCaptureTimingMDBytes = properties.Where(x => x.Key.ToString().ToUpper() == intelCaptureTiming).First().Value;
+            intelCaptureTimingMD = Types.ByteArrayToStructure<Types.REAL_SENSE_RS400_DEPTH_METADATA_INTEL_CAPTURE_TIME>((byte[])intelCaptureTimingMDBytes);
+            int id = (int)intelCaptureTimingMD.frameCounter;
+            Logger.Debug("IR Frame Arrived = " + id);
         }
-
         private void Depth_FrameReader_FrameArrived(MediaFrameReader sender, MediaFrameArrivedEventArgs args)
         {
-            Logger.Debug("Depth Frame Arrived");
+            var frame = sender.TryAcquireLatestFrame();
+            var fmt = frame.Format;
+            var intelCaptureTiming = "2BF10C23-BF48-4C54-B1F9-9BB19E70DB05";
+            Types.REAL_SENSE_RS400_DEPTH_METADATA_INTEL_CAPTURE_TIME intelCaptureTimingMD = new Types.REAL_SENSE_RS400_DEPTH_METADATA_INTEL_CAPTURE_TIME();
+            var properties = frame.Properties;
+            var intelCaptureTimingMDBytes = properties.Where(x => x.Key.ToString().ToUpper() == intelCaptureTiming).First().Value;
+            intelCaptureTimingMD = Types.ByteArrayToStructure<Types.REAL_SENSE_RS400_DEPTH_METADATA_INTEL_CAPTURE_TIME>((byte[])intelCaptureTimingMDBytes);
+            int id = (int)intelCaptureTimingMD.frameCounter;
+            Logger.Debug("Depth Frame Arrived = " + id);
         }
 
         private void FrameReader_FrameArrived(Windows.Media.Capture.Frames.MediaFrameReader sender, Windows.Media.Capture.Frames.MediaFrameArrivedEventArgs args)

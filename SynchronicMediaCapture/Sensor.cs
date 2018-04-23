@@ -244,7 +244,7 @@ namespace SynchronicMediaCapture
             return _cP.GetControl(control, SensorType);
         }
         public void Start()
-        {
+        {            
             if (!_isConfigured)
             {
                 string errorMessage = "Operation is not allowed - run Open() first before trying Start the stream";
@@ -265,7 +265,7 @@ namespace SynchronicMediaCapture
                 Logger.Error(errorMessage);
                 throw new Exception(errorMessage);
             }
-            
+            receivedFramesCounter = 0;
             Task.Run(async () =>
             {               
                 await FrameReader.StartAsync();
@@ -294,6 +294,7 @@ namespace SynchronicMediaCapture
                 await FrameReader.StopAsync();
             }).Wait();
 
+            Logger.Debug("Toatal Frames Received = " + receivedFramesCounter);
             _activeStream = false;
         }
 
@@ -371,8 +372,10 @@ namespace SynchronicMediaCapture
 
         //=======================================================================================================================================================
         //================================================================= Private methods ======================================================================
+        int receivedFramesCounter = 0;
         private void MFR_FrameArrived(MediaFrameReader sender, MediaFrameArrivedEventArgs args)
         {
+
             var frameData = ExtractFrameData(sender);
             paramsToPass[0] = frameData;
 
@@ -385,13 +388,13 @@ namespace SynchronicMediaCapture
                 }
                 else
                 {
-                    var ts = DateTime.Now.Millisecond;
-                    Logger.Debug("Trying Invoke = " + ts);
+                    //var ts = DateTime.Now.Millisecond;
+                    //Logger.Debug("Trying Invoke = " + ts);
                     pythonFunc?.DynamicInvoke(frameData);
-                    Logger.Debug("Invoke Done = " + ts);
-                }
-                
-                Logger.Debug("Frame Number = " + frameData.FrameId);
+                    receivedFramesCounter++;
+                    //Logger.Debug("Invoke Done = " + ts);
+                }                
+                //Logger.Debug("Frame Number = " + frameData.FrameId);
             }
             catch (Exception ex)
             {
@@ -402,15 +405,16 @@ namespace SynchronicMediaCapture
         {
             numerator = 0;
             denominator = 0;
-
             switch (fps)
             {
-                case 6: { numerator = 2000000; denominator = 333333; return true; }
-                case 15: { numerator = 15; denominator = 1; return true; }
-                case 30: { numerator = 30; denominator = 1; return true; }
-                case 60: { numerator = 60; denominator = 1; return true; }
-                case 90: { numerator = 10000000; denominator = 111111; return true; }
-                default: return false;
+                case 4:     { numerator = 4;        denominator = 1;        return true; }
+                case 6:     { numerator = 2000000;  denominator = 333333;   return true; }
+                case 15:    { numerator = 15;       denominator = 1;        return true; }
+                case 30:    { numerator = 30;       denominator = 1;        return true; }
+                case 25:    { numerator = 25;       denominator = 1;        return true; }
+                case 60:    { numerator = 60;       denominator = 1;        return true; }
+                case 90:    { numerator = 10000000; denominator = 111111;   return true; }
+                default:                                                    return false;
             }
         }
         private CameraProperties GetCameraProperty(Types.Sensor sensor)

@@ -236,7 +236,8 @@ namespace SynchronicMediaCapture
         {
             if (mFF.Subtype.Equals("{38574152-1A66-A242-9065-D01814A8EF8A}")) return Types.Formats.RAW8;
             if (mFF.Subtype.Equals("{49323159-0000-0010-8000-00AA00389B71}")) return Types.Formats.CALIBRATION;
-            if (mFF.Subtype.Equals("{59565955-0000-0010-8000-00AA00389B71}")) return Types.Formats.UYVY;
+            //if (mFF.Subtype.Equals("{59565955-0000-0010-8000-00AA00389B71}")) return Types.Formats.UYVY;
+            if (mFF.Subtype.Equals("NV12")) return Types.Formats.UYVY;
             if (mFF.Subtype.Equals("{20493859-0000-0010-8000-00AA00389B71}")) return Types.Formats.L8R8;
             if (mFF.Subtype.ToLower().Equals("l8")) return Types.Formats.Y;
             if (mFF.Subtype.ToLower().Equals("d16")) return Types.Formats.Z;

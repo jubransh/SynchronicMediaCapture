@@ -1,0 +1,17 @@
+Version 1.14.2
+	- supporting new display names:
+		* Intel(R) RealSense(TM) 435 with Tracking Module Depth
+		* Intel(R) RealSense(TM) 435 with Tracking Module Color
+
+Version 1.14.1:
+	- supporting 4 FPS
+
+Version 1.14:
+	- supporting UYVY Mode
+
+Version 1.13:
+	- supporting 25 FPS
+
+Version 1.12:
+	- fixed Frames Drops Issue in C# synchronicMediaCapture.dll Layer
+

@@ -108,7 +108,7 @@ namespace SynchronicMediaCapture
         private Types.SourceGroupType GetTypeOfSourceGroup(MediaFrameSourceGroup sG)
         {
             Logger.Debug(string.Format("Running  GetTypeOfSourceGroup() method on {0}", sG.DisplayName));
-
+            //
             //check what is the type of the source group
             switch (sG.DisplayName)
             {
@@ -119,21 +119,26 @@ namespace SynchronicMediaCapture
                 case "Intel(R) RealSense(TM) 415 Depth":
                 case "Intel(R) RealSense(TM) 415 with RGB Module Depth":
                 case "Intel(R) RealSense(TM) 430 Depth":
+                case "Intel(R) RealSense(TM) 420 Depth":
                 case "Intel(R) RealSense(TM) 430 with RGB Module Depth":
+                case "Intel(R) RealSense(TM) 435 with RGB Module Depth":
+                case "Intel(R) RealSense(TM) 420 with Tracking Module Depth":
                 case "Intel(R) RealSense(TM) 430 with Tracking Module Depth":
                     return Types.SourceGroupType.DEPTH;
 
                 case "Intel(R) RealSense(TM) 415 RGB":
                 case "Intel(R) RealSense(TM) 415 with RGB Module RGB":
                 case "Intel(R) RealSense(TM) 430 with RGB Module RGB":
+                case "Intel(R) RealSense(TM) 435 with RGB Module RGB":
                     return Types.SourceGroupType.COLOR;
 
+                case "Intel(R) RealSense(TM) 420 with Tracking Module FishEye":
                 case "Intel(R) RealSense(TM) 430 with Tracking Module FishEye":
                     return Types.SourceGroupType.FISHEYE;
 
                 default:
                     Logger.Debug("MediaFrameSourceGroup is: " + sG.DisplayName);
-                    return Types.SourceGroupType.UNKNOWN;
+                    return Types.SourceGroupType.COLOR;
             }
         }
         
