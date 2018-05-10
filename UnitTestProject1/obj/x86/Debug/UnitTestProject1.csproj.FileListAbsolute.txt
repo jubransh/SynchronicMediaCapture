@@ -1,1 +1,0 @@
-C:\Intel\tfs\ivcam\QA\DS5\SynchronicMediaCapture\UnitTestProject1\obj\x86\Debug\UnitTestProject1.csprojResolveAssemblyReference.cache
