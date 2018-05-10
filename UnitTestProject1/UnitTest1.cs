@@ -286,6 +286,85 @@ namespace UnitTestProject1
         }
 
         [TestMethod]
+        public void TestStartStop()
+        {
+            int iterations_number = 2500;
+
+            Device d1 = null;
+            DeviceManager dm = new DeviceManager();
+            var devices = dm.GetListOfConnectedDevices();
+
+            if (devices.Count == 0)
+                return;
+
+            if (devices.Count > 0)
+            {
+                d1 = devices[0]; //get first device 
+                d1.InitDevice(); // init device
+                d1.InitSensors(); // init device sensors
+
+                var ssss = d1.GetSerial();
+
+                StreamConfiguration scIR = new StreamConfiguration(
+                    Types.Sensor.IR,
+                    Types.Formats.Y,
+                    480, 270, 6);
+
+                StreamConfiguration scDepth = new StreamConfiguration(
+                    Types.Sensor.Depth,
+                    Types.Formats.Z,
+                    480, 270, 6);
+
+                StreamConfiguration scColor = new StreamConfiguration(
+                    Types.Sensor.Color,
+                    Types.Formats.YUY2,
+                    424, 240, 6);
+
+                //Get List Of Device Sensors
+                var sensors = d1.Sensors;
+                for (int i = 1; i <= iterations_number; i++)
+                {
+                    Thread.Sleep(2000);
+                    Logger.Debug(String.Format("Start Iteration: {0}", i.ToString()));
+                    //test for AWG/ PWG/ASR/PSR
+                    if (sensors.Count == 3)
+                    {
+                        //Init And configure the depth sensor
+                        sensors[0].Init();
+                        sensors[0].Configure(scDepth);
+                        sensors[0].FrameReader.FrameArrived += Depth_FrameReader_FrameArrived;
+
+                        //Init And configure the IR sensor
+                        sensors[1].Init();
+                        sensors[1].Configure(scIR);
+                        sensors[1].FrameReader.FrameArrived += IR_FrameReader_FrameArrived;
+
+                        //Init And configure the color sensor
+                        sensors[2].Init();
+                        sensors[2].Configure(scColor);
+                        sensors[2].FrameReader.FrameArrived += Color_FrameReader_FrameArrived;
+
+                        //sensors[0].SensorType = Types.Sensor.IR
+                        sensors[0].Start();
+                        sensors[1].Start();
+                        sensors[2].Start();
+
+                        Thread.Sleep(5000);
+
+                        sensors[0].Stop();
+                        sensors[1].Stop();
+                        sensors[2].Stop();
+                    }
+                    else
+                    {
+                        Logger.Error(String.Format("sensors.Count == {0}", 3));
+                    }
+                    Logger.Debug(String.Format("End Iteration: {0}", i.ToString()));
+                }
+            }
+        }
+
+        [TestMethod]
         public void GeneralDeviceTest()
         {
             Device device = null;
