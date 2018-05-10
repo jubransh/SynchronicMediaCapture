@@ -171,6 +171,7 @@ namespace SynchronicMediaCapture
             public int mmCounter;
             public int usbCounter;
             public double ActualExposure;
+            public int AutoExposure;
             public double GainLevel;
             public double WhiteBalance;
             public string sw_timeStamp;

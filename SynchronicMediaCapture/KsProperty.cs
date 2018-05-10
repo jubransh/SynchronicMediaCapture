@@ -187,8 +187,9 @@ namespace SynchronicMediaCapture
             }
             catch (Exception ex)
             {
-                Debug.WriteLine("Failed to set with exception " + ex.ToString());
-                return false;
+                var err = "Failed to set with exception " + ex.ToString();
+                Logger.Error(err);
+                throw new Exception(err);
             }
             return false;
         }
@@ -207,18 +208,19 @@ namespace SynchronicMediaCapture
                 byte[] data = PdoToBuffer<PROPSETID_VIDCAP>(vidCap);
                 int size = Marshal.SizeOf<KSPROPERTY_CAMERACONTROL_S>();
                 var result = controller.GetDevicePropertyByExtendedId(data, (uint)size);
-
                 Debug.WriteLine(result.Status);
                 byte[] propertyData = result.Value as byte[];
                 //Debug.Assert(propertyData != null && propertyData?.Length > 0);
                 KSPROPERTY_CAMERACONTROL_S resultValue = new KSPROPERTY_CAMERACONTROL_S();
                 resultValue = ByteArrayToStructure<KSPROPERTY_CAMERACONTROL_S>(propertyData);
+
                 return resultValue.Value;
             }
             catch (Exception ex)
             {
-                Debug.WriteLine("Failed to set with exception " + ex.ToString());
-                return 0;
+                var err = "Failed to Get with exception " + ex.ToString();
+                Logger.Error(err);
+                throw new Exception(err);
             }
         }
 

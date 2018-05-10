@@ -70,7 +70,8 @@ namespace SynchronicMediaCapture
                 var currentId = sG.SourceInfos[0].Id;
                 Logger.Debug("Getting ID of source group - result: " + currentId);
 
-                var uniqDeviceId = currentId.Split('#')[3].Split('&')[1];
+                //var uniqDeviceId = currentId.Split('#')[3].Split('&')[1];
+                var uniqDeviceId = currentId.Split('#')[3].Split('&')[2];
 
                 //check if new device 
                 Logger.Debug("checking if new device");

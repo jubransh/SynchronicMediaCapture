@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using System.Threading;
 using Windows.Media.Capture.Frames;
 using System.Linq;
+using Windows.Media.Capture;
+using System.Threading.Tasks;
 
 namespace UnitTestProject1
 {
@@ -216,12 +218,17 @@ namespace UnitTestProject1
 
                 //Get List Of Device Sensors
                 var sensors = d1.Sensors;
+                sensors[0].Init();
+
+                //Get Supported Controls
+                var supportedControls = sensors[0].GetSupportedControls();
 
                 //test for AWG/ PWG/ASR/PSR
-                if(sensors.Count == 3)
+                if (sensors.Count == 3)
                 {
                     //Init And configure the depth sensor
                     sensors[0].Init();
+
                     sensors[0].Configure(scDepth);
                     sensors[0].FrameReader.FrameArrived += Depth_FrameReader_FrameArrived;                    
 
@@ -240,7 +247,7 @@ namespace UnitTestProject1
                     //var val = sensors[2].GetControl(Types.GenericControl.HUE);
 
                     //res = sensors[2].SetControl(Types.GenericControl.AUTO_EXPOSURE_PRIORITY, 1);
-                    //val = sensors[2].GetControl(Types.GenericControl.AUTO_EXPOSURE_PRIORITY);
+                    var val = sensors[2].GetControl(Types.GenericControl.AUTO_EXPOSURE_PRIORITY);
 
 
                     ////set depth control example
@@ -442,6 +449,79 @@ namespace UnitTestProject1
 
             d1.Close();
         }
+
+
+        const string Ds5_XU_GUID = "{C9606CCB-594C-4D25-AF47-CCC496435995}";
+        /* =============== List Of All XU Controls ===============
+        const uint8_t DS5_HWMONITOR                       = 1;
+        const uint8_t DS5_DEPTH_EMITTER_ENABLED           = 2;
+        const uint8_t DS5_EXPOSURE                        = 3;
+        const uint8_t DS5_LASER_POWER                     = 4;
+        const uint8_t DS5_ERROR_REPORTING                 = 7;
+        const uint8_t DS5_EXT_TRIGGER                     = 8;
+        const uint8_t DS5_ASIC_AND_PROJECTOR_TEMPERATURES = 9;
+        const uint8_t DS5_ENABLE_AUTO_WHITE_BALANCE       = 0xA;
+        const uint8_t DS5_ENABLE_AUTO_EXPOSURE            = 0xB; 
+        =========================================================*/
+
+        public enum XU_Controls
+        {
+            DS5_HWMONITOR = 1, //For Terminal
+            DepthAE = 11,
+            ManualLaserPower = 4,
+            LaserPowerMode = 2,     //On or Off
+            DepthExposure = 3,
+        };
+
+        [TestMethod]
+        public void SendXU()
+        {
+            MediaCapture depthMC = null;
+            MediaFrameSourceGroup depthSourceGroup;
+
+            //looking for Media Frame Source Groups"
+            IReadOnlyList<MediaFrameSourceGroup> allGroups = null;
+            Task.Run(async () =>
+            {
+                //looking for Media Frame Source Groups"
+                allGroups = await MediaFrameSourceGroup.FindAllAsync();
+            }).Wait();
+
+
+            //if no devices found
+            if (allGroups == null || allGroups.ToList().Count == 0)            
+                return;
+            
+
+            //Get Second Source group For Example 
+            depthSourceGroup = allGroups[2];
+            
+            var depthMediaCaptureSettings = new MediaCaptureInitializationSettings()
+            {
+                SourceGroup = depthSourceGroup,
+                SharingMode = MediaCaptureSharingMode.ExclusiveControl,
+                MemoryPreference = MediaCaptureMemoryPreference.Cpu,
+                StreamingCaptureMode = StreamingCaptureMode.Video
+            };
+
+
+            //init Media Capture object   
+            Task.Run(async () =>
+            {
+                depthMC = new MediaCapture();
+                await depthMC?.InitializeAsync(depthMediaCaptureSettings);
+            }).Wait();
+
+            var controller = depthMC.VideoDeviceController;
+            var controlValue = 0;
+
+            //Set XU Data/ Property (For Examople Laser Power)
+            var ControlId = (int)XU_Controls.ManualLaserPower;
+            controller.SetDeviceProperty(string.Format("{0} {1}", Ds5_XU_GUID, ControlId), BitConverter.GetBytes(controlValue));
+
+            Console.WriteLine("done");
+        }
+
 
         private void Color_FrameReader_FrameArrived(MediaFrameReader sender, MediaFrameArrivedEventArgs args)
         {

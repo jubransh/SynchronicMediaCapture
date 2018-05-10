@@ -203,6 +203,7 @@ namespace SynchronicMediaCapture
                 controlCap = _mC.VideoDeviceController.BacklightCompensation.Capabilities;
                 if (controlCap.Supported)
                     supportedControls.Add(new Control("Brightness", Types.GenericControl.BACKLIGHT_COMPENSATION, Types.ControlType.STANDARD, Types.SourceGroupType.COLOR, controlCap.Max, controlCap.Min, controlCap.Default, controlCap.Step, controlCap.AutoModeSupported));
+
             }
 
             //==============================================[ Depth XU Controls ]==============================================
@@ -212,15 +213,15 @@ namespace SynchronicMediaCapture
             try
             {
                 //cp.GetControl(Types.ControlName.DEPTH_AE);
-                supportedControls.Add(new Control("Depth Auto Exposure", Types.GenericControl.AUTO_EXPOSURE, Types.ControlType.XU, Types.SourceGroupType.DEPTH, 1, 0, 1, 1, true));
+                //supportedControls.Add(new Control("Depth Auto Exposure", Types.GenericControl.AUTO_EXPOSURE, Types.ControlType.XU, Types.SourceGroupType.DEPTH, 1, 0, 1, 1, true));
             }
             catch { /*do nothing*/}
 
             try
             {
                 //cp.GetManualLaserPower();
-                // supportedControls.Add(new Control("Manual Laser Power", Types.Controls.LaserPower, Types.ControlType.XU, Types.SourceGroupType.DEPTH, 1, 0, 1, 1, true));
-                // supportedControls.Add(new Control("Laser Power", Types.Controls.LaserPowerOnOff, Types.ControlType.XU, Types.SourceGroupType.DEPTH, 2, 0, 1, 1, true));
+                //supportedControls.Add(new Control("Manual Laser Power", Types.Controls.LaserPower, Types.ControlType.XU, Types.SourceGroupType.DEPTH, 1, 0, 1, 1, true));
+                //supportedControls.Add(new Control("Laser Power", Types.Controls.LaserPowerOnOff, Types.ControlType.XU, Types.SourceGroupType.DEPTH, 2, 0, 1, 1, true));
             }
             catch { /*do nothing*/}
 
@@ -236,11 +237,12 @@ namespace SynchronicMediaCapture
 
         public bool SetControl(Types.GenericControl control, int val)
         {
+            Logger.Debug("Trying To Set " + val + " to " + control.ToString() + " Control From " + DisplayName);
             return _cP.SetControl(control, SensorType, val);
         }
         public double GetControl(Types.GenericControl control)
         {//
-            Logger.Debug("Trying To Get " + control.ToString() +" Control");
+            Logger.Debug("Trying To Get " + control.ToString() +" Control From " + DisplayName);
             return _cP.GetControl(control, SensorType);
         }
         public void Start()
@@ -298,6 +300,10 @@ namespace SynchronicMediaCapture
             _activeStream = false;
         }
 
+        public bool IsInited()
+        {
+            return _inited;
+        }
         public void RegisterPythonListener(Delegate frameArriveHandler)
         {
             Logger.Debug("Registering Python callback");

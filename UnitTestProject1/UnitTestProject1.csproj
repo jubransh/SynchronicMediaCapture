@@ -77,6 +77,10 @@
       <HintPath>..\SynchronicMediaCapture\Lib\DepthCameras.WinUsb.Cli.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Runtime.WindowsRuntime, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETCore\v4.5\System.Runtime.WindowsRuntime.dll</HintPath>
+    </Reference>
     <Reference Include="Windows, Version=255.255.255.255, Culture=neutral, PublicKeyToken=null" />
   </ItemGroup>
   <Choose>

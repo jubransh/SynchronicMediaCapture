@@ -95,13 +95,14 @@ namespace SynchronicMediaCapture
 
                 //set data to the xu control
                 _vC_Depth.SetDeviceProperty(string.Format("{0} {1}", Ds5_XU_GUID, ControlId), BitConverter.GetBytes((value)));
-                //QaLogger.WriteLine("Setting Control to value " + value + " Succeded");
+                Logger.Debug("Setting Control to value " + value + " Succeded");
                 return true;
             }
             catch (Exception e)
             {
-               // QaLogger.WriteLine("Setting Control Failed On: " + e.Message, Types.LogLevel.ERROR);
-                return false;
+                var err = "Setting Control Failed On: " + e.Message;
+                Logger.Error(err);
+                throw new Exception(err);
             }
         }
         private double GetXUProperty(XU_Controls xuControl)
@@ -117,8 +118,9 @@ namespace SynchronicMediaCapture
             }
             catch (Exception e)
             {
-                //QaLogger.WriteLine("Getting Control Failed On: " + e.Message, Types.LogLevel.ERROR);
-                throw new Exception("Getting Control Failed On: " + e.Message);
+                var err = "Getting Control Failed On: " + e.Message;
+                Logger.Error(err);
+                throw new Exception(err);
             }
         }
 
@@ -175,8 +177,18 @@ namespace SynchronicMediaCapture
                 throw new Exception(string.Format("Getting {0} Property Failed on: {1}", controlName, e.Message));
             }
         }
-        private bool SetAutoUvcControl(MediaDeviceControl control, bool isAuto, string controlName = "")
+        private bool GetAutoUvcControl(MediaDeviceControl control, string controlName = "")
         {
+            bool returnedVal;
+            if (control.TryGetAuto(out returnedVal))
+            {
+                return returnedVal;
+            }
+            throw new Exception("Getting Auto UVC control Failed");
+        }
+
+        private bool SetAutoUvcControl(MediaDeviceControl control, bool isAuto, string controlName = "")
+        {            
             if (control.TrySetAuto(isAuto))
             {
                 //QaLogger.WriteLine(string.Format("{0} Property set to {1} Mode Successfully", controlName, isAuto ? "Auto" : "Manual"), Types.LogLevel.DEBUG);
@@ -257,6 +269,10 @@ namespace SynchronicMediaCapture
         }
 
         //================== Public Methods - Color Controls ================== 
+        public bool GetColorAutoExposure()
+        {
+            return GetAutoUvcControl(_vC_Color.Exposure, "AutoExposure");
+        }
         public bool SetColorAutoExposure(bool isAuto)
         {
             return SetAutoUvcControl(_vC_Color.Exposure, isAuto, "AutoExposure");
@@ -396,7 +412,7 @@ namespace SynchronicMediaCapture
             switch (specControl)
             {
                 //Color Control
-                case Types.Control.EXPOSURE:
+                case Types.Control.COLOR_EXPOSURE:
                     return SetMFControl(_vC_Color, CameraControl_ControlValues.EXPOSURE, value);
 
                 case Types.Control.GAIN:
@@ -461,8 +477,11 @@ namespace SynchronicMediaCapture
             Types.Control specControl = ConvertGenericControlToSpec(control, sensorType);
             switch (specControl)
             {
-                //Color Control
-                case Types.Control.EXPOSURE:
+                //Color Control               
+                case Types.Control.COLOR_AE:
+                    return GetColorAutoExposure()? 1:0;
+
+                case Types.Control.COLOR_EXPOSURE:
                     return GetMFControlValue(_vC_Color, CameraControl_ControlValues.EXPOSURE);
 
                 case Types.Control.GAIN:
@@ -530,17 +549,23 @@ namespace SynchronicMediaCapture
                 var newValue = value;
                 //FW will return an error if you set the same value twice 
 
+                bool res = true;
                 if (propValue != newValue)
-                    return prop.Set(newValue);
+                {
+                    res = prop.Set(newValue);
+                    Logger.Debug("SetMFControl " + (res ? "Passed" : "Failed"));
+                    return res;
+                }
                 return true;
             }
             catch (Exception ex)
             {
-                Logger.Error(string.Format("Setting {0} Control Failed On: {1}", control.ToString(), ex.Message));
-                return false;
+                var errorMessage = string.Format("Setting {0} Control Failed On: {1}", control.ToString(), ex.Message);
+                Logger.Error(errorMessage);
+                throw new Exception(errorMessage);
             }
         }
-        private bool SetMFControl(VideoDeviceController vC, CameraControl_ControlValues control, int value)
+        private bool SetMFControl(VideoDeviceController vC, CameraControl_ControlValues control, int newValue)
         {
             try
             {
@@ -548,15 +573,22 @@ namespace SynchronicMediaCapture
                     throw new Exception("Color VideoDeviceController is null");
 
                 CameraControl cameraControl = new CameraControl((uint)control, vC);
-                var newValue = cameraControl.Get();
-               
+                var orig = cameraControl.Get();
+
                 //FW will return an error if you set the same value twice 
-                return cameraControl.Set(newValue);
+                if (orig != newValue)
+                {
+                    var res = cameraControl.Set(newValue);
+                    Logger.Debug("SetMFControl " + (res ? "Passed" : "Failed"));
+                    return res;
+                }
+                return true;
             }
             catch (Exception ex)
             {
-                Logger.Error(string.Format("Setting {0} Control Failed On: {1}", control.ToString(), ex.Message));
-                return false;
+                var errorMessage = string.Format("Setting {0} Control Failed On: {1}", control.ToString(), ex.Message);
+                Logger.Error(errorMessage);
+                throw new Exception(errorMessage);
             }
         }
         private double GetMFControlValue(VideoDeviceController vC, CameraControl_ControlValues control)
@@ -571,7 +603,7 @@ namespace SynchronicMediaCapture
             }
             catch (Exception ex)
             {
-                var errorMessage = string.Format("Setting {0} Control Failed On: {1}", control.ToString(), ex.Message);
+                var errorMessage = string.Format("Getting {0} Control Failed On: {1}", control.ToString(), ex.Message);
                 Logger.Error(errorMessage);
                 throw new Exception(errorMessage);
             }
@@ -593,7 +625,7 @@ namespace SynchronicMediaCapture
             }
             catch (Exception ex)
             {
-                var errorMessage = string.Format("Setting {0} Control Failed On: {1}", control.ToString(), ex.Message);
+                var errorMessage = string.Format("Getting {0} Control Failed On: {1}", control.ToString(), ex.Message);
                 Logger.Error(errorMessage);
                 throw new Exception(errorMessage);
             }
@@ -616,6 +648,7 @@ namespace SynchronicMediaCapture
                     {
                         switch (sensor)
                         {
+                            case Types.Sensor.IR:
                             case Types.Sensor.Depth: return Types.Control.DEPTH_GAIN;
                             case Types.Sensor.Color: return Types.Control.GAIN;
                             default: return Types.Control.UNKNOWN;

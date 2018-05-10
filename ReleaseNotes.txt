@@ -1,3 +1,20 @@
+Version 1.15.0.0
+	- Bug Fix: 
+		* Supporting Device with Color in Windows RS3
+
+Version 1.14.6.0
+	- Fixed Method: 
+		* SetMFControl(VideoDeviceController vC, CameraControl_ControlValues control, int newValue)
+
+Version 1.14.5.0
+	- Supporting Color Exposure in GetControl Method
+	- Supporting Color Exposure in SetControl Method
+	- Get MF Control throws exception on failure.
+
+Version 1.14.3
+	- throwing exception when setting/ getting control via XU fail
+	- writing more data to the log 
+
 Version 1.14.2
 	- supporting new display names:
 		* Intel(R) RealSense(TM) 435 with Tracking Module Depth
