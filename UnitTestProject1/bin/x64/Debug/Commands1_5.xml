@@ -1,0 +1,874 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Commands FwVersion="3.90.00.00">
+  <Command Name="MRB" Opcode="0x01" ReadFormat="Bytes" IsReadCommand="true" Description="Read Tensilica memory ( 8bit ). Output : 8bit dump">
+    <Parameter1 Name="Offset" />
+    <Parameter2 Name="End Address" />
+  </Command>
+  <Command Name="MRW" Opcode="0x02" ReadFormat="Words" IsReadCommand="true" Description="Read Tensilica memory ( 16bit ). Output : 16bit dump">
+    <Parameter1 Name="Offset" />
+    <Parameter2 Name="End Address" />
+  </Command>
+  <Command Name="MRD" Opcode="0x3" ReadFormat="Doubles" IsReadCommand="true" Description="Read Tensilica memory ( 32bit ). Output : 32bit dump">
+    <Parameter1 Name="Offset" />
+    <Parameter2 Name="End Address" />
+  </Command>
+  <Command Name="MWB" Opcode="0x04" Description="Write Tensilica memory ( 8bit )">
+    <Parameter1 Name="Start Address" />
+    <Parameter2 Name="End Address" />
+    <Data Name="Data" IsReverseBytes="true" FormatLength="2" />
+  </Command>
+  <Command Name="MWW" Opcode="0x05" Description="Write Tensilica memory ( 16bit )">
+    <Parameter1 Name="Start Address" />
+    <Parameter2 Name="End Address" />
+    <Data Name="Data" IsReverseBytes="true" FormatLength="4" />
+  </Command>
+  <Command Name="MWD" Opcode="0x06" Description="Write Tensilica memory ( 32bit )">
+    <Parameter1 Name="Start Address" />
+    <Parameter2 Name="End Address" />
+    <Data Name="Data" IsReverseBytes="true" FormatLength="8" />
+  </Command>
+  <Command Name="PSP" Opcode="0x07" Description="Projector activate single pattern">
+    <Parameter1 Name="Pattern number(0..8, e, f)" />
+  </Command>
+  <Command Name="LOPV" Opcode="0x08" ReadFormat="Doubles" IsReadCommand="true" Description="Liguria Optical Validation time to not safe from no clocks">
+  </Command>
+  <Command Name="LPOS" Opcode="0x09" Description="Load MsyncDelay From PMB table to Asic and start projection">
+    <Parameter1 Name="laserDacFromConfiguration" />
+  </Command>
+  <Command Name="LGTEMP" Opcode="0x0a" ReadFormat="Doubles" IsReadCommand="true" Description="Liguria Get Temperature">
+  </Command>
+  <Command Name="USDM" Opcode="0x0b" ReadFormat="Bytes" IsReadCommand="false" Description="Usb Set Desc Mode ">
+    <Parameter1 Name="Desc mode (1-Debug, 0-Operational)" />
+  </Command>
+  <Command Name="TSEN" Opcode="0x0c" ReadFormat="Bytes" IsReadCommand="false" Description="TimeStamp (1-Enable, 0-Disable)">
+    <Parameter1 Name="Enable on PCAM" />
+    <Parameter2 Name="Enable on TCAM" />
+  </Command>
+  <Command Name="FEIG" Opcode="0x0d" ReadFormat="Bytes" IsReadCommand="true" Description="Flow Error Info Get">
+    <ReadData>
+      <Section Name="i2cError" Title="I2C Error" Offset="0" Size="1" FormatType="DecByte" />
+      <Section Name="i2cCnt" Title="num errors" Offset="1" Size="1" FormatType="DecByte" />
+      <Section Name="i2cDeviceId" Title="device ID" Offset="2" Size="1" FormatType="DecByte" />
+      <Section Name="i2cStatus" Title="status" Offset="3" Size="1" FormatType="DecByte" />
+      <Section Name="i2cOffset" Title="offset" Offset="4" Size="2" FormatType="HexNumberReversed" />
+      <Section Name="tableError" Title="Table Error" Offset="6" Size="1" FormatType="DecByte" />
+      <Section Name="tableCnt" Title="num errors" Offset="7" Size="1" FormatType="DecByte" />
+      <Section Name="tableId" Title="table ID" Offset="8" Size="1" FormatType="DecByte" />
+      <Section Name="tableStatus" Title="status" Offset="9" Size="1" FormatType="DecByte" />
+      <Section Name="humidityTimeMili" Title="time(mSec)" Offset="10" Size="4" FormatType="HexNumberReversed" />
+      <Section Name="humidityError" Title="Humidity Error" Offset="14" Size="1" FormatType="DecByte" />
+      <Section Name="humidityCnt" Title="num errors" Offset="15" Size="1" FormatType="DecByte" />
+      <Section Name="depthError" Title="Depth Error" Offset="16" Size="1" FormatType="DecByte" />
+      <Section Name="depthCnt" Title="num errors" Offset="17" Size="1" FormatType="DecByte" />
+      <Section Name="depthErrEvent" Title="event num" Offset="18" Size="2" FormatType="HexNumberReversed" />
+      <Section Name="depthStatus" Title="status" Offset="20" Size="1" FormatType="DecByte" />
+      <Section Name="depthParam" Title="param" Offset="21" Size="1" FormatType="DecByte" />
+      <Section Name="rgbError" Title="RGB Error" Offset="22" Size="1" FormatType="DecByte" />
+      <Section Name="rgbCnt" Title="num errors" Offset="23" Size="1" FormatType="DecByte" />
+      <Section Name="rgbErrEvent" Title="event num" Offset="24" Size="2" FormatType="HexNumberReversed" />
+      <Section Name="rgbStatus" Title="status" Offset="26" Size="1" FormatType="DecByte" />
+      <Section Name="rgbParam" Title="param" Offset="27" Size="1" FormatType="DecByte" />
+      <Section Name="overFlowRgbCnt" Title="overFlow RGB cnt" Offset="28" Size="4" FormatType="HexNumberReversed" />
+      <Section Name="overFlowDepthCnt" Title="overFlow DPT cnt" Offset="32" Size="4" FormatType="HexNumberReversed" />
+    </ReadData>
+  </Command>
+  <Command Name="GLE" Opcode="0x0e" ReadFormat="Bytes" IsReadCommand="true" Description="Get Last Error">
+    <ReadData>
+      <Section Name="LastError" Title="LastError" Offset="0" Size="1" FormatType="DecByte" />
+    </ReadData>
+  </Command>
+  <Command Name="LFM" Opcode="0x0f" ReadFormat="Bytes" IsReadCommand="true" Description="Get Liguria Mirror Frequency">
+    <ReadData>
+      <Section Name="Sync0" Title="Sync0" Offset="0" Size="2" FormatType="HexNumberReversed" />
+      <Section Name="Sync1" Title="Sync1" Offset="2" Size="2" FormatType="HexNumberReversed" />
+    </ReadData>
+  </Command>
+  <Command Name="WDR" Opcode="0x10" ReadFormat="Doubles" IsReadCommand="false" Description="Write Debug Register">
+    <Parameter1 Name="address" />
+    <Parameter2 Name="value" />
+  </Command>
+  <Command Name="LFOVV" Opcode="0x11" ReadFormat="Doubles" IsReadCommand="true" Description="Liguria Field Of View Validation">
+  </Command>
+  <Command Name="UES" Opcode="0x12" ReadFormat="Bytes" IsReadCommand="true" Description="USB enumeration status">
+    <ReadData>
+      <Section Name="WinUSB" Title="WinUSB Device enumerated" Offset="0" Size="1" FormatType="HexNumber" />
+      <Section Name="RGB" Title="RGB Device enumerated" Offset="1" Size="1" FormatType="HexNumber" />
+      <Section Name="Depth" Title="Depth Device enumerated" Offset="2" Size="1" FormatType="HexNumber" />
+    </ReadData>
+  </Command>
+  <Command Name="IRB" Opcode="0x13" ReadFormat="Bytes" IsReadCommand="true" Description="Read from i2c ( 8x8 )">
+    <Parameter1 Name="Device ID" />
+    <Parameter2 Name="Offset" />
+    <Parameter3 Name="Size" />
+  </Command>
+  <Command Name="IRB" Opcode="0x14" ReadFormat="Bytes" IsReadCommand="true" Description="Read from i2c ( 16x8 )">
+    <Parameter1 Name="Device ID" />
+    <Parameter2 Name="Offset" />
+    <Parameter3 Name="Size" />
+  </Command>
+  <Command Name="IRW" Opcode="0x15" ReadFormat="Words" IsReadCommand="true" Description="Read from i2c ( 8x16 )">
+    <Parameter1 Name="Device ID" />
+    <Parameter2 Name="Offset" />
+    <Parameter3 Name="Size" />
+  </Command>
+  <Command Name="IRW" Opcode="0x16" ReadFormat="Words" IsReadCommand="true" Description="Read from i2c ( 16x16 )">
+    <Parameter1 Name="Device ID" />
+    <Parameter2 Name="Offset" />
+    <Parameter3 Name="Size" />
+  </Command>
+  <Command Name="IRD" Opcode="0x17" ReadFormat="Doubles" IsReadCommand="true" Description="Read from i2c ( 8x32 )">
+    <Parameter1 Name="Device ID">
+    </Parameter1>
+    <Parameter2 Name="Offset">
+    </Parameter2>
+    <Parameter3 Name="Size">
+    </Parameter3>
+  </Command>
+  <Command Name="IRD" Opcode="0x18" ReadFormat="Doubles" IsReadCommand="true" Description="Read from i2c ( 16x32 )">
+    <Parameter1 Name="Device ID">
+    </Parameter1>
+    <Parameter2 Name="Offset" Size="16">
+    </Parameter2>
+    <Parameter3 Name="Size">
+    </Parameter3>
+  </Command>
+  <Command Name="IWB" Opcode="0x19" Description="Write to i2c ( 8x8 )">
+    <Parameter1 Name="Device ID">
+    </Parameter1>
+    <Parameter2 Name="Offset">
+    </Parameter2>
+    <Parameter3 Name="Size">
+    </Parameter3>
+    <Data FormatLength="2" />
+  </Command>
+  <Command Name="IWB" Opcode="0x1A" Description="Write to i2c ( 16x8 )">
+    <Parameter1 Name="Device ID">
+    </Parameter1>
+    <Parameter2 Name="Offset">
+    </Parameter2>
+    <Parameter3 Name="Size">
+    </Parameter3>
+    <Data />
+  </Command>
+  <Command Name="IWW" Opcode="0x1B" Description="Write to i2c ( 8x16 )">
+    <Parameter1 Name="Device ID">
+    </Parameter1>
+    <Parameter2 Name="Offset">
+    </Parameter2>
+    <Parameter3 Name="Size">
+    </Parameter3>
+    <Data IsReverseBytes="true" FormatLength="4" />
+  </Command>
+  <Command Name="IWW" Opcode="0x1C" OffsetSize="16" Description="Write to i2c ( 16x16 )">
+    <Parameter1 Name="Device ID">
+    </Parameter1>
+    <Parameter2 Name="Offset">
+    </Parameter2>
+    <Parameter3 Name="Size">
+    </Parameter3>
+    <Data IsReverseBytes="true" FormatLength="4" />
+  </Command>
+  <Command Name="IWD" Opcode="0x1D" Description="Write to i2c ( 8x32 )">
+    <Parameter1 Name="Device ID">
+    </Parameter1>
+    <Parameter2 Name="Offset">
+    </Parameter2>
+    <Parameter3 Name="Size">
+    </Parameter3>
+    <Data IsReverseBytes="true" FormatLength="8" />
+  </Command>
+  <Command Name="IWD" Opcode="0x1E" Description="Write to i2c ( 16x32 )">
+    <Parameter1 Name="Device ID">
+    </Parameter1>
+    <Parameter2 Name="Offset">
+    </Parameter2>
+    <Parameter3 Name="Size">
+    </Parameter3>
+    <Data IsReverseBytes="true" FormatLength="8" />
+  </Command>
+  <Command Name="LEDCON" Opcode="0x1f" Description="Turn On\OFF the IVCAM LED">
+    <Parameter1 Name="On\Off">
+    </Parameter1>
+  </Command>
+  <Command Name="LDDLOCK" Opcode="0x20" Description="lock laser driver max gain value">
+  </Command>
+  <Command Name="MSS" Opcode="0x21" IsReadCommand="true" Description="returnes msafe state">
+  </Command>
+  <Command Name="LPDN" Opcode="0x22" Description="Starting liguria calibration">
+    <Parameter1 Name="Freq0" />
+    <Parameter2 Name="timeout" />
+  </Command>
+  <Command Name="FRB" Opcode="0x23" Description="Read from flash">
+    <Parameter1 Name="StartIndex">
+    </Parameter1>
+    <Parameter2 Name="Size">
+    </Parameter2>
+  </Command>
+  <Command Name="LGSC" Opcode="0x24" Description="dump s curve info">
+  </Command>
+  <Command Name="FWB" Opcode="0x25" Description="Write to flash">
+    <Parameter1 Name="StartIndex">
+    </Parameter1>
+    <Parameter2 Name="Size">
+    </Parameter2>
+    <Data />
+  </Command>
+  <Command Name="ETR" Opcode="0x26" ReadFormat="Doubles" IsReadCommand="true" Description="read Eyesafety tables entries from memory">
+    <Parameter1 Name="Address" />
+    <Parameter2 Name="Number of entries" IsDecimal="true" />
+  </Command>
+  <Command Name="HWA" Opcode="0x27" ReadFormat="Bytes" IsReadCommand="true" Description="read HW assertion information">
+  </Command>
+  <Command Name="HWRST" Opcode="0x28" Description="System Reset" IsWriteOnly="true">
+  </Command>
+  <Command Name="LGFS" Opcode="0x29" Description="Liguria Get Feedback S Curve">
+    <Parameter1 Name="numOfSamples">
+    </Parameter1>
+    <Parameter2 Name="samplesToAvg">
+    </Parameter2>
+  </Command>
+  <Command Name="LGFR" Opcode="0x2a" TimeOut="40000" RetryIntervalTime="50" Description="liguria frequency report">
+    <Parameter1 Name="startFreq">
+    </Parameter1>
+    <Parameter2 Name="endFreq">
+    </Parameter2>
+    <Parameter3 Name="numOfSteps">
+    </Parameter3>
+    <Parameter3 Name="delayBetweenSteps">
+    </Parameter3>
+  </Command>
+  <Command Name="LISF" Opcode="0x2B" Description="liguria set initial scan frequency">
+    <Parameter1 Name="freq">
+    </Parameter1>
+    <Parameter2 Name="isDisableFreqValidation">
+    </Parameter2>
+  </Command>
+  <Command Name="FRMW" Opcode="0x2c" Description="Flash read-modify-write">
+    <Parameter1 Name="StartAddress">
+    </Parameter1>
+    <Parameter2 Name="Size">
+    </Parameter2>
+    <Data />
+  </Command>
+  <Command Name="GPW" Opcode="0x2D" Description="Write to GPIO">
+    <Parameter1 Name="Pin">
+    </Parameter1>
+    <Parameter2 Name="Value">
+    </Parameter2>
+  </Command>
+  <Command Name="GPR" Opcode="0x2E" IsReadCommand="true" Description="Read from GPIO">
+    <Parameter1 Name="Pin">
+    </Parameter1>
+  </Command>
+  <Command Name="GPP" Opcode="0x2F" Description="Pulse GPIO">
+    <Parameter1 Name="Pin">
+    </Parameter1>
+    <Parameter2 Name="Value">
+    </Parameter2>
+    <Parameter3 Name="Time">
+    </Parameter3>
+  </Command>
+  <Command Name="GSD" Opcode="0x30" Description="Set GPIO direction">
+    <Parameter1 Name="Pin">
+    </Parameter1>
+    <Parameter2 Name="Direction">
+    </Parameter2>
+  </Command>
+  <Command Name="GGD" Opcode="0x31" IsReadCommand="true" Description="Get GPIO direction">
+    <Parameter1 Name="Pin">
+    </Parameter1>
+  </Command>
+  <Command Name="WTI" Opcode="0x32" Description="Wait Time">
+    <Parameter1 Name="Microseconds" IsDecimal="true">
+    </Parameter1>
+  </Command>
+  <Command Name="FES" Opcode="0x33" Description="Erase flash sector">
+    <Parameter1 Name="Sector Index">
+    </Parameter1>
+    <Parameter1 Name="Number of Sectors">
+    </Parameter1>
+  </Command>
+  <Command Name="FEF" Opcode="0x34" Description="Erase flash full">
+    <Parameter1 Name="0xACE">
+    </Parameter1>
+  </Command>
+  <Command Name="GLD" Opcode="0x35" IsReadCommand="true" Description="LoggerCoreGetDataParams">
+    <Parameter1 Name="NumberOfBytes" IsDecimal="true" />
+  </Command>
+  <Command Name="TEST" Opcode="0x36" IsReadCommand="true" Description=" for developer use only ">
+    <Parameter1 Name="Param1" IsDecimal="true" />
+    <Parameter1 Name="Param2" IsDecimal="true" />
+    <ReadData>
+      <Section Name="TestResult0" Title="Test result uint32[0]" Offset="0" Size="4" FormatType="DecNumber" />
+    </ReadData>
+  </Command>
+  <Command Name="INTEN" Opcode="0x37" Description="INTERRUPT ENABLE\DISABLE">
+    <Parameter1 Name="Enable\Disable" />
+    <Parameter2 Name="Interrupt number" />
+  </Command>
+  <Command Name="FSRU" Opcode="0x38" Description="Flash status register unlock">
+  </Command>
+  <Command Name="IME" Opcode="0x39" Description="Internal Msync Enable">
+    <Parameter1 Name="Enable - 1\Disable - 0" />
+    <Parameter2 Name="Exposure time in unit of 100 uSec" />
+    <Parameter3 Name="Relaxation Mode enable" />
+    <Parameter4 Name="" />
+  </Command>
+  <Command Name="WUP" Opcode="0x3A" Description="get wake-up status flag">
+  </Command>
+  <Command Name="GVD" Opcode="0x3B" IsReadCommand="true" Description="Get Version and Date">
+    <ReadData>
+      <Section Name="FirmewareVersion" Title="Uvc" Offset="0" Size="8" FormatType="ChangeSetVersion" />
+      <Section Name="ChipVersion" Title="Product" Offset="8" Size="2" FormatType="MajorMinorVersion" />
+      <Section Name="AsicVersion" Title="Asic Step" Offset="10" Size="4" FormatType="HexByte" />
+      <Section Name="CoreVersion" Title="Core" Offset="14" Size="8" FormatType="ChangeSetVersion" />
+      <Section Name="UsbVersion" Title="Usb" Offset="22" Size="8" FormatType="ChangeSetVersion" />
+      <Section Name="DriversVersion" Title="Drivers" Offset="30" Size="8" FormatType="ChangeSetVersion" />
+      <Section Name="MEMSVersion" Title="EyeSafety" Offset="38" Size="8" FormatType="ChangeSetVersion" />
+      <Section Name="DFUVersion" Title="DFU" Offset="46" Size="8" FormatType="ChangeSetVersion" />
+      <Section Name="LiguriaApiVersion" Title="MPM Api" Offset="54" Size="4" FormatType="LiguriaVersion" />
+      <Section Name="FlashRwVersion" Title="Flash Rw TOC" Offset="58" Size="2" FormatType="MajorMinorVersion" />
+      <Section Name="OEMVersion" Title="OEM Table" Offset="60" Size="2" FormatType="MajorMinorVersion" />
+      <Section Name="CalibVersion" Title="Calib Rw Table" Offset="62" Size="2" FormatType="MajorMinorVersion" />
+      <Section Name="MlBinVersion" Title="MlBin Table" Offset="64" Size="2" FormatType="MajorMinorVersion" />
+      <Section Name="ProjPatternVersion" Title="Proj Pattern Table" Offset="66" Size="2" FormatType="MajorMinorVersion" />
+      <Section Name="FlashRoVersion" Title="Flash Ro TOC" Offset="68" Size="2" FormatType="MajorMinorVersion" />
+      <Section Name="RgbSensorTblVersion" Title="RGB Sensor Table" Offset="70" Size="2" FormatType="MajorMinorVersion" />
+      <Section Name="IrSensorTblVersion" Title="IR Sensor Table" Offset="72" Size="2" FormatType="MajorMinorVersion" />
+      <Section Name="PmbVersion" Title="Mpm Table" Offset="74" Size="2" FormatType="MajorMinorVersion" />
+      <Section Name="ClibRoVersion" Title="Calib Ro Table" Offset="76" Size="2" FormatType="MajorMinorVersion" />
+      <Section Name="ProjGainVersion" Title="Proj Gain Table" Offset="78" Size="2" FormatType="MajorMinorVersion" />
+      <Section Name="ExternalIsp" Title="External ISP" Offset="80" Size="1" FormatType="Bool" />
+      <Section Name="HwType" Title="Module HW Type" Offset="81" Size="1" FormatType="HwTypeNumber" />
+      <Section Name="LDVersion" Title="Laser Driver" Offset="82" Size="2" FormatType="MajorMinorVersion" />
+      <Section Name="PMBHwversion" Title="MPM Hw" Offset="84" Size="4" FormatType="MajorMinorVersion" />
+      <Section Name="IrHWVersion" Title="IR Sensor HW" Offset="88" Size="4" FormatType="WideMajorMinorVersion" />
+      <Section Name="RgbSensorVersion" Title="RGB Sensor Hw" Offset="92" Size="4" FormatType="HexNumber" />
+      <Section Name="RgbIspVersion" Title="RGB ISP Hw" Offset="96" Size="2" FormatType="HexNumber" />
+      <Section Name="RgbIspFWVersion" Title="RGB ISP FW" Offset="98" Size="2" FormatType="HexNumber" />
+      <Section Name="AsicId" Title="Asic Serial Id" Offset="100" Size="32" FormatType="Ascii" />
+      <Section Name="ModuleSerialVersion" Title="Module Serial" Offset="132" Size="8" FormatType="BarCodeSerial12Char" />
+      <Section Name="IrPixelVer" Title="IR Sensor Pixel" Offset="141" Size="1" FormatType="DecByte" />
+      <Section Name="OEMUnLockVersion" Title="OEM unlock Table" Offset="142" Size="2" FormatType="MajorMinorVersion" />
+      <Section Name="OemLock" Title="Oem Table Locked" Offset="151" Size="1" FormatType="Bool" />
+      <Section Name="OemId" Title="Oem Id" Offset="152" Size="4" FormatType="HexNumberReversed" />
+      <Section Name="IctTesterMode" Title="ICT Tester Mode" Offset="156" Size="2" FormatType="HexNumber" />
+      <Section Name="PmbTesterMode" Title="PMB Tester Mode" Offset="158" Size="2" FormatType="HexNumber" />
+      <Section Name="SendorTesterMode" Title="Sensor Tester Mode" Offset="160" Size="2" FormatType="HexNumber" />
+      <Section Name="IvcamTesterMode" Title="IVCAM Tester Mode" Offset="162" Size="2" FormatType="HexNumber" />
+      <Section Name="StarpState" Title="Strap State" Offset="164" Size="4" FormatType="HexNumberReversed" />
+      <Section Name="Locked" Title="Flash locked" Offset="168" Size="1" FormatType="Bool" />
+      <Section Name="EngLabMode" Title="Lab Mode" Offset="169" Size="1" FormatType="Bool" />
+      <Section Name="MmNumber" Title="MM Number" Offset="170" Size="4" FormatType="HexNumberReversed" />
+    </ReadData>
+  </Command>
+  <Command Name="CRU" Opcode="0x3D" IsReadCommand="true" Description="Flash Read Calibration Table to HOST">
+    <Parameter1 Name="Region Type 0-&gt;RO 1-&gt;RW">
+    </Parameter1>
+  </Command>
+  <Command Name="OBR" Opcode="0x3E" IsReadCommand="true" Description="OVT Bypass Read">
+    <Parameter1 Name="Register address">
+    </Parameter1>
+  </Command>
+  <Command Name="OBW" Opcode="0x3F" IsReadCommand="false" Description="OVT Bypass Write">
+    <Parameter1 Name="Register address">
+    </Parameter1>
+    <Parameter1 Name="Value to write">
+    </Parameter1>
+  </Command>
+  <Command Name="IRGS" Opcode="0x40" Description="IR sensor set Glue">
+    <Parameter1 Name="Glue value" />
+  </Command>
+  <Command Name="IRGG" Opcode="0x41" Description="IR sensor get Glue">
+  </Command>
+  <Command Name="RGBGS" Opcode="0x42" Description="RGB sensor set Glue">
+    <Parameter1 Name="Glue value" />
+  </Command>
+  <Command Name="RGBGG" Opcode="0x43" Description="RGB sensor get Glue">
+  </Command>
+  <Command Name="FPS" Opcode="0x44" Description="FPS optimazer">
+    <Parameter1 Name="ReadOutRowNum" />
+    <Parameter2 Name="ExposureTime" />
+    <Parameter3 Name="LsyncPeriodValid" />
+    <Parameter4 Name="FpsParam" />
+  </Command>
+  <Command Name="SYNC_FPS" Opcode="0x45" Description="Synchronization mode on/off">
+    <Parameter1 Name="1 - On / 0 - Off" />
+  </Command>
+  <Command Name="LAC" Opcode="0x46" Description="Liguria activate">
+    <Parameter1 Name="EnableOTP" />
+  </Command>
+  <Command Name="LPD" Opcode="0x47" TimeOut="14000" RetryIntervalTime="50" Description="Search for Liguria natural frequency">
+    <Parameter1 Name="Frec0" />
+    <Parameter2 Name="Frec1" />
+    <Parameter3 Name="Frec2" />
+  </Command>
+  <Command Name="LGC" Opcode="0x48" IsReadCommand="true" Description="LiguriaGetAngleCoarse">
+  </Command>
+  <Command Name="LSC" Opcode="0x49" Description="LiguriaSetAngleCoarse">
+    <Parameter1 Name="amplitude Value" />
+  </Command>
+  <Command Name="I2CCONECT" Opcode="0x4a" IsReadCommand="true" Description="Perform I2C connectivity test. Output 0:7 Pass/Fail (1/0),            8:63 Byte per device failed/ok (1/0) - RGB ISP, Depth, Liguria, Laser, RGB Sensor">
+    <ReadData>
+      <Section Name="isConnectivityPassed" Title="isConnectivityPassed" Offset="0" Size="1" FormatType="DecByte" />
+      <Section Name="RGB ISP Failed Connectivity" Title="RGB ISP Failed" Offset="1" Size="1" FormatType="DecByte" />
+      <Section Name="DPT Sensor Driver Failed Connectivity" Title="DPT Sensor Failed Connectivity" Offset="2" Size="1" FormatType="DecByte" />
+      <Section Name="MEMS Driver Failed Connectivity" Title="MEMS Driver Failed Connectivity" Offset="3" Size="1" FormatType="DecByte" />
+      <Section Name="Laser Driver Failed Connectivity" Title="Laser Driver Failed Connectivity" Offset="4" Size="1" FormatType="DecByte" />
+    </ReadData>
+  </Command>
+  <Command Name="RGBCONECT" Opcode="0x4b" IsReadCommand="true" Description="Perform RGB Connectivity test.            Output 0:31 Pass/Fail (1/0), 32:39 TSvrEPHYGood, 40:47 TSvrLastLongPacketGood, 48:55 TSvrGoodFrame, 64:95 Stat">
+    <Parameter1 Name="Stat Value [ 0 - digital mode ]" />
+  </Command>
+  <Command Name="DPTCONECT" Opcode="0x4c" IsReadCommand="true" Description="Perform DPT Connectivity test.            Output 0:31 Pass/Fail (1/0), 32:39 PSvrEPHYGood, 40:47 PSvrLastLongPacketGood, 48:55 PSvrGoodFrame, 64:95 Stat">
+    <Parameter1 Name="Stat Value [ 0 - digital mode ]" />
+  </Command>
+  <Command Name="WAKE_ICON" Opcode="0x4D" IsReadCommand="true" Description="Read WakeUp icon">
+    <Parameter1 Name="icon type 0-reference 1-current" />
+    <Parameter2 Name="Index ( 1 – 5 )" />
+  </Command>
+  <Command Name="FPLOCK" Opcode="0x4e" IsReadCommand="true" Description="Permanent lock on lower Quarter region of the flash.">
+    <Parameter1 Name="Password" />
+  </Command>
+  <Command Name="GCB" Opcode="0x4f" IsReadCommand="true" Description="Get common FW buffer">
+  </Command>
+  <Command Name="CALCPRW" Opcode="0x50" Description="Copy Calib table from RO to RW">
+  </Command>
+  <Command Name="CALGETSTAT" Opcode="0x51" IsReadCommand="true" Description="Get Status of Calib Tables">
+  </Command>
+  <Command Name="FTEMP" Opcode="0x52" IsReadCommand="true" ReadFormat="Bytes" Description="IR sensor Get Temperature">
+    <ReadData>
+      <Section Name="IR temperature" Title="IR Sensor Temperature (decimal)" Offset="0" Size="1" FormatType="DecByte" />
+    </ReadData>
+  </Command>
+  <Command Name="RFC" Opcode="0x53" Description="Write data to RealTek flash">
+    <Parameter1 Name="Offset">
+    </Parameter1>
+    <Parameter2 Name="Length">
+    </Parameter2>
+  </Command>
+  <Command Name="RFSE" Opcode="0x54" Description="Erase a sector in RealTek flash">
+    <Parameter1 Name="Offset">
+    </Parameter1>
+  </Command>
+  <Command Name="RCALIBCOPY" Opcode="0x55" Description="Copy Calibration table from IVCAM flash to RealTek flash">
+  </Command>
+  <Command Name="RFBI" Opcode="0x56" Description="Burn a complete RealTek flash image">
+  </Command>
+  <Command Name="USBEVEN" Opcode="0x57" Description="USB Electric Validation Enable">
+    <Parameter1 Name="Test num" />
+  </Command>
+  <Command Name="USBEVS" Opcode="0x58" IsReadCommand="true" Description="USB Electric Validation Status">
+    <ReadData>
+      <Section Name="RxUnderFlow" Title="RX UnderFlow" Offset="0" Size="1" FormatType="DecByte" />
+      <Section Name="RxTendToOverFlow" Title="Rx Tend To OverFlow" Offset="1" Size="1" FormatType="DecByte" />
+      <Section Name="RxDecodeErr" Title="Rx Decode Error" Offset="2" Size="1" FormatType="DecByte" />
+      <Section Name="RxOverFlow" Title="Rx OverFlow" Offset="3" Size="1" FormatType="DecByte" />
+      <Section Name="TxValidPackets" Title="Tx Valid Packets" Offset="4" Size="4" FormatType="HexNumberReversed" />
+      <Section Name="TxRetryPackets" Title="Tx Retry Packets" Offset="8" Size="2" FormatType="HexNumberReversed" />
+    </ReadData>
+  </Command>
+  <Command Name="LGF" Opcode="0x5A" IsReadCommand="true" Description="LiguriaGetAngleFine">
+  </Command>
+  <Command Name="LSF" Opcode="0x5B" Description="LiguriaSetAngleFine">
+    <Parameter1 Name="Duty Cycle Value" />
+  </Command>
+  <Command Name="LSN" Opcode="0x5C" Description="LiguriaBuildNonminalConfig">
+  </Command>
+  <Command Name="LGP" Opcode="0x5D" IsReadCommand="true" Description="LiguriaGetPhaseDelayCalibration">
+  </Command>
+  <Command Name="LSP" Opcode="0x5E" Description="LiguriaSetPhaseDelayCalibration">
+    <Parameter1 Name="MSync" />
+  </Command>
+  <Command Name="LCI" Opcode="0x5F" Description="LiguriaCalibrateInternalConfigAngleControl">
+  </Command>
+  <Command Name="LSE" Opcode="0x60" Description="LiguriaSaveCalibrationToFlash">
+  </Command>
+  <Command Name="LBO" Opcode="0x61" Description="LiguriaBurnOtp">
+    <Parameter1 Name="enable" />
+  </Command>
+  <Command Name="MSE" Opcode="0x62" IsReadCommand="true" Description="WaitForMemsSafe upto 2 seconds">
+  </Command>
+  <Command Name="GEFV" Opcode="0x63" IsReadCommand="true" Description="Get events file version">
+  </Command>
+  <Command Name="GBCV" Opcode="0x64" IsReadCommand="true" Description="Get binary commands version">
+  </Command>
+  <Command Name="SYNC_DPT_DELAY" Opcode="0x65" IsReadCommand="true" Description="Get sync delay in 0.1ms ( signed long, should be added by SW to Depth time-stamp )">
+  </Command>
+  <Command Name="LLN" Opcode="0x66" Description="LiguriaLoadNonminalConfig">
+  </Command>
+  <Command Name="LSD" Opcode="0x67" Description="Liguria_Disable">
+  </Command>
+  <Command Name="LPO" Opcode="0x68" Description="LiguriaProjectorActivate">
+    <Parameter1 Name="step delay" />
+  </Command>
+  <Command Name="LVO" Opcode="0x69" IsReadCommand="true" Description="LiguriaVerifyOtp">
+  </Command>
+  <Command Name="RFST" Opcode="0x6a" Description="Set RealTek ISP Tag bit">
+  </Command>
+  <Command Name="LSCSETCOEF" Opcode="0x6b" Description="Lens Shading Correction Set Coefficients">
+    <Data Name="Data" IsReverseBytes="true" FormatLength="8" />
+  </Command>
+  <Command Name="LSCENABLE" Opcode="0x6c" Description="Lens Shading Correction Enable\Disable">
+    <Parameter1 Name="enable\disable" />
+  </Command>
+  <Command Name="CMR" Opcode="0x6d" Description="Perform IR CMR gain calibration">
+    <Parameter1 Name="voltage 100mv\400mv" />
+  </Command>
+  <Command Name="FDS" Opcode="0x6e" Description="Set IR Number of dark rows 32/16/8/4 default is 32">
+    <Parameter1 Name="Number of dark rows" />
+  </Command>
+  <Command Name="UCC" Opcode="0x6f" Description="Update Cycle Completed">
+  </Command>
+  <Command Name="PWR_SAVE" Opcode="0x70" Description="B0 power save mode on/off">
+    <Parameter1 Name="1 - On / 0 - Off" />
+  </Command>
+  <Command Name="SYNC_STATUS" Opcode="0x71" IsReadCommand="true" Description="Get sync delay ( byte, 0 - disabled )">
+  </Command>
+  <Command Name="LMM" Opcode="0x72" Description="LiguriaEnableManualMode">
+  </Command>
+  <Command Name="LSM" Opcode="0x73" Description="LiguriaSetManualFreq">
+    <Parameter1 Name="freq" />
+  </Command>
+  <Command Name="LDS" Opcode="0x74" Description="LiguriaIVCam_DebugGetStatus">
+    <Parameter1 Name="mode" />
+  </Command>
+  <Command Name="TLFORCE" Opcode="0x75" Description="Thermal Loop Force Enable\Disable">
+    <Parameter1 Name="enable\disable" />
+  </Command>
+  <Command Name="LIE" Opcode="0x76" Description="LiguriaIVCam_EnableIrq">
+  </Command>
+  <Command Name="LGV" Opcode="0x77" Description="LiguriaIVCam_TriggerOac">
+  </Command>
+  <Command Name="LIF" Opcode="0x78" Description="LiguriaTester_GetDriveFrequency">
+  </Command>
+  <Command Name="LIM" Opcode="0x79" Description="LiguriaIVCam_MaskIrq">
+    <Parameter1 Name="irqMask" />
+  </Command>
+  <Command Name="LIS" Opcode="0x7A" IsReadCommand="true" ReadFormat="Words" Description="Debug - liguria get irq status">
+  </Command>
+  <Command Name="LIC" Opcode="0x7B" IsReadCommand="true" ReadFormat="Words" Description="Debug - liguria clear irq">
+  </Command>
+  <Command Name="PFD" Opcode="0x7C" Description="Disable Idle Power Feature">
+    <Parameter1 Name="Enable" />
+  </Command>
+  <Command Name="TLTEMPSET" Opcode="0x7d" Description="Force Ir reference temperature for Thermal Loop">
+    <Parameter1 Name="irTemp" />
+  </Command>
+  <Command Name="USE" Opcode="0x7e" Description="Disable\Enable U1U2">
+    <Parameter1 Name="Enable" />
+  </Command>
+  <Command Name="LOES" Opcode="0x7F" IsReadCommand="true" Description="OacIsStable">
+  </Command>
+  <Command Name="DFU" Opcode="0x80" Description="go_to_dfu">
+    <Parameter1 Name="ResetUsb" />
+  </Command>
+  <Command Name="PTE" Opcode="0x81" Description="Projector Tester Enable">
+  </Command>
+  <Command Name="PTD" Opcode="0x82" Description="Projector Tester Disable">
+  </Command>
+  <Command Name="PTS" Opcode="0x83" Description="Projector Tester Status">
+  </Command>
+  <Command Name="WRPMBDATA" Opcode="0x84" Description="Write Pmb Data (Page0)">
+    <Parameter1 Name="CRC" />
+    <Parameter2 Name="Version" />
+    <Data />
+  </Command>
+  <Command Name="GPMBOFFSET" Opcode="0x85" IsReadCommand="true" ReadFormat="Bytes" Description="GetPmb Offset (Page0)">
+  </Command>
+  <Command Name="INITPMB" Opcode="0x86" Description="InitPmb">
+  </Command>
+  <Command Name="SMD" Opcode="0x87" Description="Set mSyncDelay to Flash">
+    <Parameter1 Name="mSyncDelay">
+    </Parameter1>
+  </Command>
+  <Command Name="RESETPMB" Opcode="0x88" Description="ResetPmb">
+  </Command>
+  <Command Name="LOESDATA" Opcode="0x89" IsReadCommand="true" Description="OacStableData">
+    <ReadData>
+      <Section Name="OAC Stable time" Title="OAC Stable time" Offset="0" Size="4" FormatType="HexNumberReversed" />
+      <Section Name="Average Used" Title="Average Used" Offset="4" Size="1" FormatType="DecByte" />
+    </ReadData>
+  </Command>
+  <Command Name="STAT_CFG" Opcode="0x8a" Description="Configures stat icon module">
+    <Parameter1 Name="Enable" />
+    <Parameter2 Name="Secondary source ( 1-4:Pcam\GC\Bin\Dpt )" />
+    <Parameter3 Name="Icons Per Frame ( 1-2 )" />
+    <Parameter4 Name="Reference Icon (0-1)" />
+  </Command>
+  <Command Name="STAT_READ" Opcode="0x8b" IsReadCommand="true" Description="Reads Index 1-10 -&gt; 960 bytes from stat buffer : 2 icons * 4800 bytes / Index 11-34 -&gt; 24 histograms * 512 bytes">
+    <Parameter1 Name="Index ( 1 – 34 )" />
+    <Parameter2 Name="Last Packet On Frame  ( 0 - 1 )" />
+  </Command>
+  <Command Name="FPN" Opcode="0x8c" Description="FPN Enable\Disable, FPN disable will send frames without ADC compensation, change will work only on next play">
+    <Parameter1 Name="Enable 1 / 0" />
+  </Command>
+  <Command Name="FTEMPCOLD" Opcode="0x8d" IsReadCommand="true" ReadFormat="Bytes" Description="IR Sensor Cold-Read of Temperature">
+    <ReadData>
+      <Section Name="Bare Temperature" Title="Bare Temperature [DN]" Offset="0" Size="4" FormatType="HexNumberReversed" />
+      <Section Name="Temp Slope" Title="Temp Slope [float]" Offset="4" Size="4" FormatType="HexNumberReversed" />
+    </ReadData>
+  </Command>
+  <Command Name="MIPITESTMODE" Opcode="0x8e" Description="MIPI Test mode enable">
+    <Parameter1 Name="Disable(0), TCAM(1), PCAM(2)" />
+  </Command>
+  <Command Name="MIPICNTGET" IsReadCommand="true" ReadFormat="Bytes" Opcode="0x8f" Description="MIPI Counters Get">
+  </Command>
+  <Command Name="MIPICNTRST" Opcode="0x90" Description="MIPI Counters Reset">
+  </Command>
+  <Command Name="WAKE_ON" Opcode="0x91" Description="Wake-Up device enable/disable">
+    <Parameter1 Name="Enable/Disable" />
+    <Data Name="params" IsReverseBytes="true" FormatLength="4" />
+  </Command>
+  <Command Name="WAKE_CONF" IsReadCommand="true" ReadFormat="Bytes" Opcode="0x92" Description="Wake-Up device Confidence Get">
+  </Command>
+  <Command Name="WAKE_REASON" IsReadCommand="true" ReadFormat="Bytes" Opcode="0x93" Description="Wake-Up device reason get">
+  </Command>
+  <Command Name="MEM_READ" IsReadCommand="true" ReadFormat="Doubles" Opcode="0x94" Description="read dwords from memory">
+    <Parameter1 Name="Offset" />
+    <Parameter2 Name="num DWORDs" />
+  </Command>
+  <Command Name="OSSTCK" Opcode="0x95" IsReadCommand="true" Description="Check OS stacks usage">
+    <ReadData>
+      <Section Name="Number of threads" Title="Number of threads" Offset="0" Size="4" FormatType="HexNumberReversed" />
+      <Section Name="Thread 1 hex stack_address" Title="Thread 1 hex stack_address" Offset="4" Size="4" FormatType="HexNumberReversed" />
+      <Section Name="Thread 1 hex stack_size" Title="Thread 1 hex stack_size" Offset="8" Size="4" FormatType="HexNumberReversed" />
+      <Section Name="Thread 1 hex used_stack_size" Title="Thread 1 hex used_stack_size" Offset="12" Size="4" FormatType="HexNumberReversed" />
+      <Section Name="Thread 2 hex stack_address" Title="Thread 2 hex stack_address" Offset="16" Size="4" FormatType="HexNumberReversed" />
+      <Section Name="Thread 2 hex stack_size" Title="Thread 2 hex stack_size" Offset="20" Size="4" FormatType="HexNumberReversed" />
+      <Section Name="Thread 2 hex used_stack_size" Title="Thread 2 hex used_stack_size" Offset="24" Size="4" FormatType="HexNumberReversed" />
+      <Section Name="Thread 3 hex stack_address" Title="Thread 3 hex stack_address" Offset="28" Size="4" FormatType="HexNumberReversed" />
+      <Section Name="Thread 3 hex stack_size" Title="Thread 3 hex stack_size" Offset="32" Size="4" FormatType="HexNumberReversed" />
+      <Section Name="Thread 3 hex used_stack_size" Title="Thread 3 hex used_stack_size" Offset="36" Size="4" FormatType="HexNumberReversed" />
+      <Section Name="Thread 4 hex stack_address" Title="Thread 4 hex stack_address" Offset="40" Size="4" FormatType="HexNumberReversed" />
+      <Section Name="Thread 4 hex stack_size" Title="Thread 4 hex stack_size" Offset="44" Size="4" FormatType="HexNumberReversed" />
+      <Section Name="Thread 4 hex used_stack_size" Title="Thread 4 hex used_stack_size" Offset="48" Size="4" FormatType="HexNumberReversed" />
+      <Section Name="Thread 5 hex stack_address" Title="Thread 5 hex stack_address" Offset="52" Size="4" FormatType="HexNumberReversed" />
+      <Section Name="Thread 5 hex stack_size" Title="Thread 5 hex stack_size" Offset="56" Size="4" FormatType="HexNumberReversed" />
+      <Section Name="Thread 5 hex used_stack_size" Title="Thread 5 hex used_stack_size" Offset="60" Size="4" FormatType="HexNumberReversed" />
+      <Section Name="Thread 6 hex stack_address" Title="Thread 6 hex stack_address" Offset="64" Size="4" FormatType="HexNumberReversed" />
+      <Section Name="Thread 6 hex stack_size" Title="Thread 6 hex stack_size" Offset="68" Size="4" FormatType="HexNumberReversed" />
+      <Section Name="Thread 6 hex used_stack_size" Title="Thread 6 hex used_stack_size" Offset="72" Size="4" FormatType="HexNumberReversed" />
+    </ReadData>
+  </Command>
+  <Command Name="RGBFP" Opcode="0x96" IsReadCommand="true" Description="Get current RGB stream frame parameters">
+    <ReadData>
+      <Section Name="RGB streaming frame rate" Title="RGB streaming frame rate" Offset="0" Size="4" FormatType="Number" />
+      <Section Name="RGB streaming frame height" Title="RGB streaming frame height" Offset="4" Size="4" FormatType="Number" />
+      <Section Name="RGB streaming frame width" Title="RGB streaming frame width" Offset="8" Size="4" FormatType="Number" />
+      <Section Name="RGB streaming frame color temperature" Title="RGB streaming frame color temperature" Offset="12" Size="4" FormatType="Number" />
+      <Section Name="RGB streaming frame color integration time" Title="RGB streaming frame color integration time" Offset="16" Size="4" FormatType="Number" />
+    </ReadData>
+  </Command>
+  <Command Name="VSYNC_TRIG" Opcode="0x97" Description="Enables\Disables VSYNC output">
+    <Parameter1 Name="Enable\Disable [1\0 ]" />
+    <Parameter2 Name="Pulse width 1 - 100 us" />
+    <Parameter3 Name=" Active Edge" />
+  </Command>
+  <Command Name="SLS" Opcode="0x98" Description="LoggerCoreSetModuleSeverity">
+    <Parameter1 Name="Group Selection Mask[Use bits 0-4]" />
+    <Parameter2 Name="Severity[Use values 0-4]" />
+  </Command>
+  <Command Name="WMS" Opcode="0x99" Description="WaitForMemsSafe">
+  </Command>
+  <Command Name="DME" Opcode="0x9A" Description="Enable Error Log">
+  </Command>
+  <Command Name="DMD" Opcode="0x9B" Description="Disable Error Log">
+  </Command>
+  <Command Name="DMG" Opcode="0x9C" Description="Get Errors Log">
+  </Command>
+  <Command Name="OVTEN" Opcode="0x9d" Description="Enables\Disables OVT not in preview mode, requires enabled Realtek">
+    <Parameter1 Name="Enable\Disable [1\0 ]" />
+  </Command>
+  <Command Name="SMI" Opcode="0x9F" Description="Set Module Info">
+    <Parameter1 Name="Dummy" />
+    <Parameter2 Name="CRC" />
+    <Data />
+  </Command>
+  <Command Name="GMI" Opcode="0xA0" IsReadCommand="true" Description="Get Module Info">
+  </Command>
+  <Command Name="RPMB" Opcode="0xA1" IsReadCommand="true" Description="flash_tbl_rd_data @ Pmb">
+    <Parameter1 Name="PhaseId" />
+  </Command>
+  <Command Name="LED_ENABLE" Opcode="0xA2" IsReadCommand="true" Description="Enable\Disable LED when streaming">
+    <Parameter1 Name="Enable" />
+  </Command>
+  <Command Name="CAL" Opcode="0xA3" Description="Set Calibration Tables">
+    <Parameter1 Name="BasketNumber" />
+    <Parameter2 Name="CRC" />
+    <Parameter3 Name="Target" />
+    <Parameter4 Name="Version" />
+    <Data />
+  </Command>
+  <Command Name="SETIRT" Opcode="0xA4" Description="Set IR sensor table Info">
+    <Data />
+  </Command>
+  <Command Name="GETIRT" Opcode="0xA5" Description="Get IR sensor table Info">
+  </Command>
+  <Command Name="AR_CFG" Opcode="0xA6" Description="Auto-Range configure -&gt; param1: MVR Enable param2: LAser Enable + Data: Mvr Min Mvr Max Mvr Start  Laser Min Laser Max Laser Start">
+    <Parameter1 Name="auto MvR enable" />
+    <Parameter2 Name="auto laser enable" />
+    <Data Name="params" IsReverseBytes="true" FormatLength="2" />
+  </Command>
+  <Command Name="META_ENABLE" Opcode="0xa7" Description="Meta-Data after USB header Enable\Disable (0 - non, 1 - rgb, 2 - depth, 3 - all)">
+    <Parameter1 Name="MetaData enable/disable" />
+  </Command>
+  <Command Name="LMSS" IsReadCommand="true" Opcode="0xa8" Description="Logger module severity setLogger module severity set">
+    <Parameter1 Name="Logger module Id" />
+    <Parameter2 Name="Severity" />
+  </Command>
+  <Command Name="SETRGBT" Opcode="0xA9" Description="Set RGB sensor table Info">
+    <Data />
+  </Command>
+  <Command Name="GETRGBT" Opcode="0xAA" Description="Get RGB sensor table Info">
+  </Command>
+  <Command Name="SETTLT" Opcode="0xAB" Description="Set Thermal Loop table Info">
+    <Data />
+  </Command>
+  <Command Name="GETTLT" Opcode="0xAC" Description="Get Thermal Loop table Info">
+  </Command>
+  <Command Name="WOS" Opcode="0xad" Description="Write OEM sector">
+    <Parameter1 Name="Phase id" />
+    <Data />
+  </Command>
+  <Command Name="ROS" IsReadCommand="true" Opcode="0xae" Description="Read OEM sector">
+    <Parameter1 Name="phase id" />
+  </Command>
+  <Command Name="LOS" Opcode="0xaf" Description="Lock/Unlock OEM sector">
+    <Parameter1 Name="Lock enable/disable" />
+  </Command>
+  <Command Name="LSWE" Opcode="0xb0" Description="LiguriaIVCam_SwEnable" />
+  <Command Name="LSWR" Opcode="0xb1" Description="LiguriaIVCam_SetSwResetMode" />
+  <Command Name="LIMR" Opcode="0xb2" IsReadCommand="true" ReadFormat="Bytes" Description="LiguriaTester_IsMirrorReady" />
+  <Command Name="ARP" Opcode="0xb3" Description="Auto Range Set Params for Debug">
+    <Parameter1 Name="FieldIndex" />
+    <Parameter2 Name="FieldValue" />
+  </Command>
+  <Command Name="WAKE_CFG" Opcode="0xb4" Description="wakeUp Set Params for Debug">
+    <Parameter1 Name="Hist type" />
+    <Parameter2 Name="region num" />
+    <Parameter3 Name="pixel val" />
+    <Parameter4 Name="percent" />
+  </Command>
+  <Command Name="OEMDG" Opcode="0xB5" Description="OEM Default Version Get">
+  </Command>
+  <Command Name="ATEMP_EN" Opcode="0xB6" Description="Asic Temperature Sensor Enable\Disable">
+    <Parameter1 Name="Enable\Disable" />
+  </Command>
+  <Command Name="ATEMP_READ" Opcode="0xB7" Description="Read Asic Temperature">
+  </Command>
+  <Command Name="LPPN" Opcode="0xB8" Description="Liguria Prepare OTP">
+    <Parameter1 Name="Value" />
+  </Command>
+  <Command Name="WUDS" Opcode="0xB9" Description="Write User Defined sector">
+    <Parameter1 Name="Phase id" />
+    <Data />
+  </Command>
+  <Command Name="RUDS" IsReadCommand="true" Opcode="0xBA" Description="Read User Defined sector">
+    <Parameter1 Name="phase id" />
+  </Command>
+  <Command Name="LUDS" Opcode="0xBB" Description="Lock/Unlock  User Defined  sector">
+    <Parameter1 Name="Lock enable/disable" />
+  </Command>
+  <Command Name="UPDATECALIB" Opcode="0xbc" Description="Update calib coef" />
+  <Command Name="FLG" Opcode="0xc0" IsReadCommand="true" ReadFormat="Bytes" Description="Get post-mortem logged data from flash">
+    <Parameter1 Name="Dummy" />
+    <ReadData>
+      <Section Name="BytesOut" Title="Bytes out" Offset="0" Size="4" FormatType="DecByte" />
+      <Section Name="BytesLeft" Title="Bytes left" Offset="4" Size="4" FormatType="DecByte" />
+    </ReadData>
+    <Data />
+  </Command>
+  <Command Name="TS_HEADER" Opcode="0xBD" Description="Set header timestamp">
+    <Parameter1 Name="Msb" />
+    <Parameter2 Name="Lsb" />
+  </Command>
+  <Command Name="EXT_TRIG" Opcode="0xBE" Description="Switch depth external trigger mode">
+    <Parameter1 Name="on/off" />
+    <Parameter2 Name="delay, ms (0 – 8)" />
+  </Command>
+  <Command Name="TS_UNITS" Opcode="0xBF" Description="Set timestamp unit">
+    <Parameter1 Name="sclk units number ( must be &gt; 0 )" />
+  </Command>
+  <Command Name="OAC_READ" Opcode="0xC1" Description="Read Oac Samples for Debug">
+  </Command>
+  <Command Name="OAC_FILT" Opcode="0xC2" Description="Oac Set Filter Patterns">
+    <Parameter1 Name="Oac Debug Samples" />
+    <Parameter2 Name="FilterPatternMask" />
+  </Command>
+  <Command Name="LOE" Opcode="0xC3" Description="MemsOacEnable">
+    <Parameter1 Name="Enable" />
+  </Command>
+  <Command Name="TEMP_GET" Opcode="0xC4" Description="Get Temperature generic wrapper">
+    <Parameter1 Name="SensorType" />
+    <Parameter2 Name="Opcode" />
+    <ReadData>
+      <Section Name="Data" Title="Data [float]" Offset="0" Size="4" FormatType="HexNumberReversed" />
+    </ReadData>
+  </Command>
+  <Command Name="LOC" Opcode="0xc5" Description="SetOacControlParams">
+    <Parameter1 Name="fieldNum" />
+    <Parameter2 Name="fieldValue" />
+  </Command>
+  <Command Name="SET_POL" Opcode="0xc6" Description="SetPolarityPattern">
+    <Parameter1 Name="Polarity" />
+  </Command>
+  <Command Name="PLS" Opcode="0xc7" Description="SetProgressiveLaserPowerRecord">
+    <Parameter1 Name="index" />
+    <Parameter2 Name="time" />
+    <Parameter3 Name="val" />
+  </Command>
+  <Command Name="PLG" Opcode="0xc8" IsReadCommand="true" Description="GetProgressiveLaserPowerRecord">
+    <Parameter1 Name="value" />
+  </Command>
+  <Command Name="LGT" IsReadCommand="true" Opcode="0xc9" Description="LiguriaGetTiming" />
+  <Command Name="LHT" IsReadCommand="true" Opcode="0xca" Description="LiguriaIVCam_HumidityTest" />
+  <Command Name="UPD" Opcode="0xcb" Description="1 -&gt; RegsShadowUpdate" />
+  <Command Name="UPDI" Opcode="0xcc" Description="1 -&gt; RegsShadowUpdateImmediate" />
+  <Command Name="HWMOACEN" IsReadCommand="true" Opcode="0xcd" Description="MemsHwmOacEnable">
+    <Parameter1 Name="IsStable" />
+  </Command>
+  <Command Name="LNM" Opcode="0xce" IsReadCommand="true" Description="LiguriaIVCam_AdcSamplesDump">
+    <Parameter1 Name="dumpMode" IsDecimal="true" />
+    <Parameter2 Name="Number of samples" IsDecimal="true" />
+  </Command>
+  <Command Name="GET_POL" IsReadCommand="true" Opcode="0xcf" Description="Get Polarity Pattern" />
+  <Command Name="WAKE_SCORES" IsReadCommand="true" ReadFormat="Doubles" Opcode="0xd0" Description="Get Wake stat scores">
+  </Command>
+  <Command Name="DPT_EXP" IsReadCommand="true" ReadFormat="Doubles" Opcode="0xd1" Description="Get exposure time in uSec">
+    <Parameter1 Name="mvr (0..200)" />
+    <Parameter2 Name="accuracy (1..3)" />
+  </Command>
+  <Command Name="HDR_MODE_SET" Opcode="0xd2" Description="Set HDR Mode">
+    <Parameter1 Name="HDR Enable (1-enable, 0-disable)" />
+  </Command>
+  <Command Name="HDR_MODE_GET" IsReadCommand="true" Opcode="0xd3" Description="Get HDR Mode" />
+  <Command Name="HDR_CONFIG_SET" Opcode="0xd4" Description="Set HDR configuration (SR_frames, SR_mvr, LR_frames, LR_mvr)">
+    <Data Name="Data" IsReverseBytes="true" FormatLength="4" />
+  </Command>
+  <Command Name="HDR_CONFIG_GET" Opcode="0xd5" ReadFormat="Bytes" IsReadCommand="true" Description="Get HDR current configuration">
+    <ReadData>
+      <Section Name="SR Num Of Frames" Title="Short range frames" Offset="0" Size="2" FormatType="HexNumberReversed" />
+      <Section Name="SR Mvr" Title="Short range MVR" Offset="2" Size="2" FormatType="HexNumberReversed" />
+      <Section Name="LR Num Of Frames" Title="Long range frames" Offset="4" Size="2" FormatType="HexNumberReversed" />
+      <Section Name="LR Mvr" Title="Long range MVR" Offset="6" Size="2" FormatType="HexNumberReversed" />
+    </ReadData>
+  </Command>
+  <Command Name="AE_ONDEMAND_SET" Opcode="0xd6" Description="Set AE OnDemand">
+    <Parameter1 Name="min MvR" />
+    <Parameter2 Name="max MvR" />
+    <Parameter3 Name="AE level Percent" />
+    <Parameter4 Name="RegionType" />
+  </Command>
+  <Command Name="AE_ONDEMAND_GET" IsReadCommand="true" Opcode="0xd7" Description="Get AE OnDemand" />
+  <Command Name="OAC_UNSTABLE_THR" Opcode="0xd8" Description="Oac Unstable Threshold in ms unit">
+    <Parameter1 Name="Oac Unstable Time Threshold" />
+  </Command>
+  <Command Name="OEMUSR" IsReadCommand="true" Opcode="0xd9" Description="Read OEM unlock sector">
+    <Parameter1 Name="phase id" />
+  </Command>
+  <Command Name="OEMUSW" Opcode="0xdA" Description="Write OEM unlock sector">
+    <Parameter1 Name="Phase id" />
+    <Data />
+  </Command>
+</Commands>

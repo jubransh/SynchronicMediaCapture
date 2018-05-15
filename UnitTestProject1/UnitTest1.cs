@@ -272,14 +272,14 @@ namespace UnitTestProject1
                     ////set Get Example - depth controls
 
                     //sensors[0].SensorType = Types.Sensor.IR
-                    sensors[0].Start();
-                    sensors[1].Start();
+                    //sensors[0].Start();
+                    //sensors[1].Start();
                     sensors[2].Start();
 
                     Thread.Sleep(5000);
 
-                    sensors[0].Stop();
-                    sensors[1].Stop();
+                    //sensors[0].Stop();
+                    //sensors[1].Stop();
                     sensors[2].Stop();
                 }
             }
@@ -605,6 +605,8 @@ namespace UnitTestProject1
         private void Color_FrameReader_FrameArrived(MediaFrameReader sender, MediaFrameArrivedEventArgs args)
         {
             Logger.Debug("Color");
+            var frame = Types.ExtractFrameData(sender);
+            Logger.Debug(string.Format("Frame {0}\tTimestamp: {1}\tGain: {2}\tExposure: {3}", frame.FrameId, frame.hw_timeStamp, frame.GainLevel, frame.ActualExposure));
         }
 
         private void IR_FrameReader_FrameArrived(MediaFrameReader sender, MediaFrameArrivedEventArgs args)
@@ -612,24 +614,26 @@ namespace UnitTestProject1
             var frame = sender.TryAcquireLatestFrame();
             var fmt = frame.Format;
             var intelCaptureTiming = "2BF10C23-BF48-4C54-B1F9-9BB19E70DB05";
-            Types.REAL_SENSE_RS400_DEPTH_METADATA_INTEL_CAPTURE_TIME intelCaptureTimingMD = new Types.REAL_SENSE_RS400_DEPTH_METADATA_INTEL_CAPTURE_TIME();
+            Types.REAL_SENSE_RS400_DEPTH_METADATA_INTEL_CAPTURE_TIMING intelCaptureTimingMD = new Types.REAL_SENSE_RS400_DEPTH_METADATA_INTEL_CAPTURE_TIMING();
             var properties = frame.Properties;
             var intelCaptureTimingMDBytes = properties.Where(x => x.Key.ToString().ToUpper() == intelCaptureTiming).First().Value;
-            intelCaptureTimingMD = Types.ByteArrayToStructure<Types.REAL_SENSE_RS400_DEPTH_METADATA_INTEL_CAPTURE_TIME>((byte[])intelCaptureTimingMDBytes);
+            intelCaptureTimingMD = Types.ByteArrayToStructure<Types.REAL_SENSE_RS400_DEPTH_METADATA_INTEL_CAPTURE_TIMING>((byte[])intelCaptureTimingMDBytes);
             int id = (int)intelCaptureTimingMD.frameCounter;
             Logger.Debug("IR Frame Arrived = " + id);
         }
         private void Depth_FrameReader_FrameArrived(MediaFrameReader sender, MediaFrameArrivedEventArgs args)
         {
-            var frame = sender.TryAcquireLatestFrame();
-            var fmt = frame.Format;
-            var intelCaptureTiming = "2BF10C23-BF48-4C54-B1F9-9BB19E70DB05";
-            Types.REAL_SENSE_RS400_DEPTH_METADATA_INTEL_CAPTURE_TIME intelCaptureTimingMD = new Types.REAL_SENSE_RS400_DEPTH_METADATA_INTEL_CAPTURE_TIME();
-            var properties = frame.Properties;
-            var intelCaptureTimingMDBytes = properties.Where(x => x.Key.ToString().ToUpper() == intelCaptureTiming).First().Value;
-            intelCaptureTimingMD = Types.ByteArrayToStructure<Types.REAL_SENSE_RS400_DEPTH_METADATA_INTEL_CAPTURE_TIME>((byte[])intelCaptureTimingMDBytes);
-            int id = (int)intelCaptureTimingMD.frameCounter;
-            Logger.Debug("Depth Frame Arrived = " + id);
+            var frame = Types.ExtractFrameData(sender);
+            Logger.Debug(string.Format("Frame {0}\tTimestamp: {1}\tGain: {2}\tExposure: {3}", frame.FrameId, frame.hw_timeStamp, frame.GainLevel, frame.ActualExposure));
+            //var frame = sender.TryAcquireLatestFrame();
+            //var fmt = frame.Format;
+            //var intelCaptureTiming = "2BF10C23-BF48-4C54-B1F9-9BB19E70DB05";
+            //Types.REAL_SENSE_RS400_DEPTH_METADATA_INTEL_CAPTURE_TIMING intelCaptureTimingMD = new Types.REAL_SENSE_RS400_DEPTH_METADATA_INTEL_CAPTURE_TIMING();
+            //var properties = frame.Properties;
+            //var intelCaptureTimingMDBytes = properties.Where(x => x.Key.ToString().ToUpper() == intelCaptureTiming).First().Value;
+            //intelCaptureTimingMD = Types.ByteArrayToStructure<Types.REAL_SENSE_RS400_DEPTH_METADATA_INTEL_CAPTURE_TIMING>((byte[])intelCaptureTimingMDBytes);
+            //int id = (int)intelCaptureTimingMD.frameCounter;
+            //Logger.Debug("Depth Frame Arrived = " + id);
         }
 
         private void FrameReader_FrameArrived(Windows.Media.Capture.Frames.MediaFrameReader sender, Windows.Media.Capture.Frames.MediaFrameArrivedEventArgs args)

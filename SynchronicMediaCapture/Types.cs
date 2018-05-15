@@ -10,7 +10,11 @@ namespace SynchronicMediaCapture
 {
     public static class Types
     {
-        public struct REAL_SENSE_RS400_DEPTH_METADATA_INTEL_CAPTURE_TIME
+        public static Guid DS5_HW_TIME_STAMP_GUID = new Guid("D3C6ABAC-291A-4C75-9F47-D7B284A52619");
+        public static Guid DS5_INTEL_CAPTURE_TIMING_GUID = new Guid("2BF10C23-BF48-4C54-B1F9-9BB19E70DB05");
+        public static Guid DS5_INTEL_DEPTH_CONTROL_GUID = new Guid("482f9b07-3668-43fe-ad28-e3db3463bcb9");
+
+        public struct REAL_SENSE_RS400_DEPTH_METADATA_INTEL_CAPTURE_TIMING
         {
             public UInt32 version;
             public UInt32 flag;
@@ -21,6 +25,23 @@ namespace SynchronicMediaCapture
             public UInt32 frameInterval;     //The frame interval in millisecond second unit
             public UInt32 pipeLatency;        //The latency between start of frame to frame ready in USB buffer
         };
+        public struct REAL_SENSE_RS400_DEPTH_METADATA_INTEL_DEPTH_CONTROL
+        {
+            public UInt32 version;
+            public UInt32 flag;
+            public UInt32 gainLevel;
+            public UInt32 manualExposure;
+            public UInt32 laserPower;
+            public UInt32 autoExposureMode;
+            public UInt32 exposurePriority;
+            public UInt32 leftExposureROI;
+            public UInt32 rightExposureROI;
+            public UInt32 topExposureROI;
+            public UInt32 bottomExposureROI;
+            public UInt32 preset;
+        };
+
+        
         public enum LogLevel { DEBUG, WARNING, ERROR};
         public enum ControlType { STANDARD, XU, UNKNOWN};
         public enum ControlName { DEPTH_EXPOSURE, COLOR_EXPOSURE, DEPTH_AE, COLOR_AE, COLOR_EXP_PRIORITY, UNKNOWN};
@@ -170,14 +191,16 @@ namespace SynchronicMediaCapture
             public int FrameId;
             public int mmCounter;
             public int usbCounter;
-            public double ActualExposure;
-            public int AutoExposure;
-            public double GainLevel;
-            public double WhiteBalance;
             public string sw_timeStamp;
             public string hw_timeStamp;
             public double x, y, z;
             public byte[] ActualData;
+            public bool isDepthControlsMDAvailable;
+            public int exposurePriority;
+            public double ActualExposure;
+            public int AutoExposure;
+            public double GainLevel;
+            public double WhiteBalance;
         }
         public struct SensorInfo
         {
@@ -276,6 +299,84 @@ namespace SynchronicMediaCapture
                 return "Failed to get Sensor Endpoint";
             return parts[5].Split('#')[0];
         }
+
+        public static Types.FrameData ExtractFrameData(MediaFrameReader sender)
+        {
+            var frame = sender.TryAcquireLatestFrame();
+            Types.FrameData tempData = new Types.FrameData();
+            //var intelCaptureTiming = "2BF10C23-BF48-4C54-B1F9-9BB19E70DB05";
+            //var intelDepthControl = "482f9b07-3668-43fe-ad28-e3db3463bcb9";
+            //Guid HW_TimeStampGuid = new Guid("D3C6ABAC-291A-4C75-9F47-D7B284A52619");
+            Types.REAL_SENSE_RS400_DEPTH_METADATA_INTEL_CAPTURE_TIMING intelCaptureTimingMD = new Types.REAL_SENSE_RS400_DEPTH_METADATA_INTEL_CAPTURE_TIMING();
+            Types.REAL_SENSE_RS400_DEPTH_METADATA_INTEL_DEPTH_CONTROL intelDepthControlMD = new Types.REAL_SENSE_RS400_DEPTH_METADATA_INTEL_DEPTH_CONTROL();
+            UInt32 HwTimeStamp = 0;
+            Object temp;
+            var properties = frame.Properties;
+
+
+            // **************************************     Try getting Intel Capture Timing data  **************************************** 
+            try
+            {
+                var intelCaptureTimingMDBytes = properties.Where(x => x.Key == Types.DS5_INTEL_CAPTURE_TIMING_GUID).First().Value;
+                intelCaptureTimingMD = Types.ByteArrayToStructure<Types.REAL_SENSE_RS400_DEPTH_METADATA_INTEL_CAPTURE_TIMING>((byte[])intelCaptureTimingMDBytes);
+            }
+            catch (Exception ex)
+            {
+                properties.TryGetValue(Types.DS5_HW_TIME_STAMP_GUID, out temp);
+                HwTimeStamp = (UInt32)temp;
+            }
+
+
+            // ********************************************* Try getting Frame HW Timestamp ********************************************* 
+            try
+            {
+                properties.TryGetValue(Types.DS5_HW_TIME_STAMP_GUID, out temp);
+                HwTimeStamp = (UInt32)temp;
+            }
+            catch (Exception ex)
+            {
+                HwTimeStamp = 0;
+            }
+
+            // **************************************     Try getting Intel Depth Control data  **************************************** 
+            try
+            {
+                tempData.isDepthControlsMDAvailable = false;
+                if (properties.TryGetValue(Types.DS5_INTEL_DEPTH_CONTROL_GUID, out temp))
+                {
+                    intelDepthControlMD = Types.ByteArrayToStructure<Types.REAL_SENSE_RS400_DEPTH_METADATA_INTEL_DEPTH_CONTROL>((byte[])temp);
+                    tempData.isDepthControlsMDAvailable = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("Failed On: Try getting Intel Depth Control data");
+            }
+
+            var systemTimeStamp = frame?.SystemRelativeTime.Value.TotalMilliseconds;
+            var fmt = Types.GetFormatFromMediaFrameFormat(frame.Format);
+            var sensor = Types.GetSensorTypeFromFormat(fmt);
+            var reso = string.Format("{0}X{1}", frame.Format.VideoFormat.Width, frame.Format.VideoFormat.Height);
+            var fps = (int)(frame.Format.FrameRate.Numerator / Convert.ToDouble(frame.Format.FrameRate.Denominator));
+            //var frameCnt = IncFrameCounter(fmt);
+
+            tempData.FrameId = (int)intelCaptureTimingMD.frameCounter;
+            tempData.sensorSource = sensor;
+            tempData.format = fmt;
+            tempData.resolution = reso;
+            tempData.frameRate = fps;
+            tempData.sw_timeStamp = string.Format("{0}", systemTimeStamp);
+            tempData.hw_timeStamp = string.Format("{0}", HwTimeStamp);
+            tempData.ActualExposure = (int)intelDepthControlMD.manualExposure;
+            tempData.GainLevel = (int)intelDepthControlMD.gainLevel;
+            tempData.AutoExposure = (int)intelDepthControlMD.autoExposureMode;
+            tempData.exposurePriority = (int)intelDepthControlMD.exposurePriority;
+            tempData.ActualData = null;//frame.BufferMediaFrame.Buffer.ToArray();
+
+            frame.Dispose();
+            return tempData;
+        }
+
 
     }
 }

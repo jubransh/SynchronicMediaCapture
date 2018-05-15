@@ -886,7 +886,7 @@ namespace SynchronicMediaCapture
 
             var intelCaptureTiming = "2BF10C23-BF48-4C54-B1F9-9BB19E70DB05";
             Guid HW_TimeStampGuid = new Guid("D3C6ABAC-291A-4C75-9F47-D7B284A52619");
-            Types.REAL_SENSE_RS400_DEPTH_METADATA_INTEL_CAPTURE_TIME intelCaptureTimingMD = new Types.REAL_SENSE_RS400_DEPTH_METADATA_INTEL_CAPTURE_TIME();
+            Types.REAL_SENSE_RS400_DEPTH_METADATA_INTEL_CAPTURE_TIMING intelCaptureTimingMD = new Types.REAL_SENSE_RS400_DEPTH_METADATA_INTEL_CAPTURE_TIMING();
             UInt32 HwTimeStamp = 0;
             Object temp;
             var properties = frame.Properties;
@@ -895,7 +895,7 @@ namespace SynchronicMediaCapture
             try
             {
                 var intelCaptureTimingMDBytes = properties.Where(x => x.Key.ToString().ToUpper() == intelCaptureTiming).First().Value;
-                intelCaptureTimingMD = Types.ByteArrayToStructure<Types.REAL_SENSE_RS400_DEPTH_METADATA_INTEL_CAPTURE_TIME>((byte[])intelCaptureTimingMDBytes);
+                intelCaptureTimingMD = Types.ByteArrayToStructure<Types.REAL_SENSE_RS400_DEPTH_METADATA_INTEL_CAPTURE_TIMING>((byte[])intelCaptureTimingMDBytes);
             }
             catch (Exception ex)
             {
@@ -1151,6 +1151,7 @@ namespace SynchronicMediaCapture
                 default: return Types.Sensors.UNKNOWN;
             }
         }
+
         private string ExtractVid(string fullId)
         {
             var parts = fullId.Split('_');

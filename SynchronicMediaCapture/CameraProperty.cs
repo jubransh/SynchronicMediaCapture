@@ -639,6 +639,7 @@ namespace SynchronicMediaCapture
                     {
                         switch (sensor)
                         {
+                            case Types.Sensor.IR:
                             case Types.Sensor.Depth:    return Types.Control.DEPTH_EXPOSURE;
                             case Types.Sensor.Color:    return Types.Control.COLOR_EXPOSURE;
                             default:                    return Types.Control.UNKNOWN;
@@ -658,6 +659,7 @@ namespace SynchronicMediaCapture
                     {
                         switch (sensor)
                         {
+                            case Types.Sensor.IR:
                             case Types.Sensor.Depth: return Types.Control.DEPTH_AE;
                             case Types.Sensor.Color: return Types.Control.COLOR_AE;
                             default: return Types.Control.UNKNOWN;

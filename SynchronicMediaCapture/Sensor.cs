@@ -296,7 +296,7 @@ namespace SynchronicMediaCapture
                 await FrameReader.StopAsync();
             }).Wait();
 
-            Logger.Debug("Toatal Frames Received = " + receivedFramesCounter);
+            Logger.Debug("Total Received Frames = " + receivedFramesCounter);
             _activeStream = false;
         }
 
@@ -322,67 +322,68 @@ namespace SynchronicMediaCapture
             }
             Logger.Debug( DisplayName +  " MediaFrameReader was registered");            
         }
-        public Types.FrameData ExtractFrameData(MediaFrameReader sender)
-        {
-            Types.FrameData _tempData = new Types.FrameData();
-            var frame = sender.TryAcquireLatestFrame();
 
-            var intelCaptureTiming = "2BF10C23-BF48-4C54-B1F9-9BB19E70DB05";
-            Guid HW_TimeStampGuid = new Guid("D3C6ABAC-291A-4C75-9F47-D7B284A52619");
-            Types.REAL_SENSE_RS400_DEPTH_METADATA_INTEL_CAPTURE_TIME intelCaptureTimingMD = new Types.REAL_SENSE_RS400_DEPTH_METADATA_INTEL_CAPTURE_TIME();
-            UInt32 HwTimeStamp = 0;
-            Object temp;
-            var properties = frame.Properties;
+        //public Types.FrameData ExtractFrameData(MediaFrameReference frame)
+        //{
+        //    Types.FrameData _tempData = new Types.FrameData();
 
-            // *********************************************     Try getting Fame ID     ********************************************* 
-            try
-            {
-                var intelCaptureTimingMDBytes = properties.Where(x => x.Key.ToString().ToUpper() == intelCaptureTiming).First().Value;
-                intelCaptureTimingMD = Types.ByteArrayToStructure<Types.REAL_SENSE_RS400_DEPTH_METADATA_INTEL_CAPTURE_TIME>((byte[])intelCaptureTimingMDBytes);
-            }
-            catch (Exception ex)
-            {
-                properties.TryGetValue(HW_TimeStampGuid, out temp);
-                HwTimeStamp = (UInt32)temp;
-            }
+        //    var intelCaptureTiming = "2BF10C23-BF48-4C54-B1F9-9BB19E70DB05";
+        //    Guid HW_TimeStampGuid = new Guid("D3C6ABAC-291A-4C75-9F47-D7B284A52619");
+        //    Types.REAL_SENSE_RS400_DEPTH_METADATA_INTEL_CAPTURE_TIMING intelCaptureTimingMD = new Types.REAL_SENSE_RS400_DEPTH_METADATA_INTEL_CAPTURE_TIMING();
+        //    UInt32 HwTimeStamp = 0;
+        //    Object temp;
+        //    var properties = frame.Properties;
+
+        //    // *********************************************     Try getting Fame ID     ********************************************* 
+        //    try
+        //    {
+        //        var intelCaptureTimingMDBytes = properties.Where(x => x.Key.ToString().ToUpper() == intelCaptureTiming).First().Value;
+        //        intelCaptureTimingMD = Types.ByteArrayToStructure<Types.REAL_SENSE_RS400_DEPTH_METADATA_INTEL_CAPTURE_TIMING>((byte[])intelCaptureTimingMDBytes);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        properties.TryGetValue(HW_TimeStampGuid, out temp);
+        //        HwTimeStamp = (UInt32)temp;
+        //    }
 
 
-            // ********************************************* Try getting Frame HW Timestamp ********************************************* 
-            try
-            {
-                properties.TryGetValue(HW_TimeStampGuid, out temp);
-                HwTimeStamp = (UInt32)temp;
-            }
-            catch (Exception ex)
-            {
-            }
-            var systemTimeStamp = frame?.SystemRelativeTime.Value.TotalMilliseconds;
-            var fmt = Types.GetFormatFromMediaFrameFormat(frame.Format);
-            var sensor = Types.GetSensorTypeFromFormat(fmt);
-            var reso = string.Format("{0}X{1}", frame.Format.VideoFormat.Width, frame.Format.VideoFormat.Height);
-            var fps = (int)(frame.Format.FrameRate.Numerator / Convert.ToDouble(frame.Format.FrameRate.Denominator));
-            //var frameCnt = IncFrameCounter(fmt);
+        //    // ********************************************* Try getting Frame HW Timestamp ********************************************* 
+        //    try
+        //    {
+        //        properties.TryGetValue(HW_TimeStampGuid, out temp);
+        //        HwTimeStamp = (UInt32)temp;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //    }
+        //    var systemTimeStamp = frame?.SystemRelativeTime.Value.TotalMilliseconds;
+        //    var fmt = Types.GetFormatFromMediaFrameFormat(frame.Format);
+        //    var sensor = Types.GetSensorTypeFromFormat(fmt);
+        //    var reso = string.Format("{0}X{1}", frame.Format.VideoFormat.Width, frame.Format.VideoFormat.Height);
+        //    var fps = (int)(frame.Format.FrameRate.Numerator / Convert.ToDouble(frame.Format.FrameRate.Denominator));
+        //    //var frameCnt = IncFrameCounter(fmt);
 
-            _tempData.FrameId = (int)intelCaptureTimingMD.frameCounter;
-            _tempData.sensorSource = sensor;
-            _tempData.format = fmt;
-            _tempData.resolution = reso;
-            _tempData.frameRate = fps;
-            _tempData.sw_timeStamp = string.Format("{0}", systemTimeStamp);
-            _tempData.hw_timeStamp = string.Format("{0}", HwTimeStamp);
-            _tempData.ActualData = null;//frame.BufferMediaFrame.Buffer.ToArray();
+        //    _tempData.FrameId = (int)intelCaptureTimingMD.frameCounter;
+        //    _tempData.sensorSource = sensor;
+        //    _tempData.format = fmt;
+        //    _tempData.resolution = reso;
+        //    _tempData.frameRate = fps;
+        //    _tempData.sw_timeStamp = string.Format("{0}", systemTimeStamp);
+        //    _tempData.hw_timeStamp = string.Format("{0}", HwTimeStamp);
+        //    _tempData.ActualData = null;//frame.BufferMediaFrame.Buffer.ToArray();
 
-            frame.Dispose();
-            return _tempData;
-        }
+        //    frame.Dispose();
+        //    return _tempData;
+        //}
 
         //=======================================================================================================================================================
         //================================================================= Private methods ======================================================================
         int receivedFramesCounter = 0;
         private void MFR_FrameArrived(MediaFrameReader sender, MediaFrameArrivedEventArgs args)
         {
+            //var frame = sender.TryAcquireLatestFrame();
 
-            var frameData = ExtractFrameData(sender);
+            var frameData = Types.ExtractFrameData(sender);
             paramsToPass[0] = frameData;
 
             //Raise Event for Python

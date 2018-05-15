@@ -1,3 +1,7 @@
+Version 1.16.0.0
+	- Supporting Depth/IR Frame Metadata
+	- TODO Color Metadata
+	
 Version 1.15.0.0
 	- Bug Fix: 
 		* Supporting Device with Color in Windows RS3
