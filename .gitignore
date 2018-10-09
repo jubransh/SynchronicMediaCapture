@@ -1,0 +1,16 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/sampleApp/bin/Debug
+/sampleApp/obj/Debug
+
+UnitTestProject1/bin
+UnitTestProject1/obj
+
+/SynchronicMediaCapture/bin
+/SynchronicMediaCapture/obj
+/SynchronicMediaCapture/bin/Debug
+/SynchronicMediaCapture/obj/Debug
+/SynchronicMediaCapture/Lib
+
