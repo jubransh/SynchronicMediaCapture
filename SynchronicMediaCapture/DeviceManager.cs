@@ -115,24 +115,54 @@ namespace SynchronicMediaCapture
             {
                 case "Intel RS400 Cameras":
                     return Types.SourceGroupType.SHARED;
+            //========================================================================
+            //                              Depth 
+            //========================================================================
 
+                //============================= D410 =================================
                 case "Intel(R) RealSense(TM) 410 Depth":
+                case "Intel(R) RealSense(TM) Depth Module D410 Depth":
+
+                //============================= D415 =================================
                 case "Intel(R) RealSense(TM) 415 Depth":
+                case "Intel(R) RealSense(TM) Depth Module D415 Depth":
+                case "Intel(R) RealSense(TM) Depth Camera 415 Depth":
                 case "Intel(R) RealSense(TM) 415 with RGB Module Depth":
-                case "Intel(R) RealSense(TM) 430 Depth":
+
+                //============================= D420 =================================
                 case "Intel(R) RealSense(TM) 420 Depth":
-                case "Intel(R) RealSense(TM) 430 with RGB Module Depth":
-                case "Intel(R) RealSense(TM) 435 with RGB Module Depth":
+                case "Intel(R) RealSense(TM) Depth Module D420 Depth":
                 case "Intel(R) RealSense(TM) 420 with Tracking Module Depth":
+
+                //============================= D430 =================================
+                case "Intel(R) RealSense(TM) 430 Depth":
+                case "Intel(R) RealSense(TM) 430 with RGB Module Depth":
+                case "Intel(R) RealSense(TM) Depth Module D430 Depth":
+
+                //============================= D435 =================================
+                case "Intel(R) RealSense(TM) 435 with RGB Module Depth":
+                case "Intel(R) RealSense(TM) Depth Camera 435 with RGB Module Depth":
                 case "Intel(R) RealSense(TM) 430 with Tracking Module Depth":
                     return Types.SourceGroupType.DEPTH;
 
+            //========================================================================
+            //                              Color 
+            //========================================================================
+                //============================= D415 =================================
                 case "Intel(R) RealSense(TM) 415 RGB":
                 case "Intel(R) RealSense(TM) 415 with RGB Module RGB":
+                case "Intel(R) RealSense(TM) Depth Camera 415 RGB":
+                case "Intel(R) RealSense(TM) Depth Module D415 RGB":
+
+                //============================= D435 =================================
                 case "Intel(R) RealSense(TM) 430 with RGB Module RGB":
                 case "Intel(R) RealSense(TM) 435 with RGB Module RGB":
+                case "Intel(R) RealSense(TM) Depth Camera 435 with RGB Module RGB":
                     return Types.SourceGroupType.COLOR;
 
+            //========================================================================
+            //                              Fisheye 
+            //========================================================================
                 case "Intel(R) RealSense(TM) 420 with Tracking Module FishEye":
                 case "Intel(R) RealSense(TM) 430 with Tracking Module FishEye":
                     return Types.SourceGroupType.FISHEYE;

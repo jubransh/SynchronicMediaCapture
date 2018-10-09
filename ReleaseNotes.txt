@@ -1,3 +1,27 @@
+Version 1.16.7.5
+	- replacing Asic Seria with Optic Serial when calling Device.GetSerial() method
+
+Version 1.16.7.4
+	- Fixed Color Auto Exposure Value in Metadata
+
+Version 1.16.7.3
+	- Fixed Duplicated Frame ID = 0 Issue
+
+Version 1.16.7.2
+	- Added Device.Dispose()
+
+Version 1.16.7.1
+	- Restarting Frame Server when closing Device
+
+Version 1.16.7.0
+	- Restarting Frame Server when closing Device Disabled
+
+Version 1.16.6.0
+	- Restarting Frame Server when closing Device
+
+Version 1.16.5.0
+	- Supporting Color Controls Frame Metadata
+
 Version 1.16.0.0
 	- Supporting Depth/IR Frame Metadata
 	- TODO Color Metadata

@@ -4,7 +4,9 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.ServiceProcess;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Windows.Media.Capture;
 using Windows.Media.Capture.Frames;
@@ -684,7 +686,7 @@ namespace SynchronicMediaCapture
 
         public string GetSerial(/*string workingDir = ""*/)
         {
-            return GetDataFromGVD("AsicModuleSerial:");
+            return GetDataFromGVD("OpticModuleSerial:");
         }
         public bool ResetCamera()
         {
@@ -708,7 +710,7 @@ namespace SynchronicMediaCapture
         {
             switch (sGT)
             {
-                case Types.SourceGroupType.SHARED: { _sharedSourceGroup = mFSG; Logger.Debug("shared device was added to the device"); break; }
+                case Types.SourceGroupType.SHARED: { _sharedSourceGroup = mFSG; Logger.Debug("Shared device was added to the device"); break; }
                 case Types.SourceGroupType.DEPTH: { _depthSourceGroup = mFSG; Logger.Debug("Depth device was added to the device"); break; }
                 case Types.SourceGroupType.COLOR: { _colorSourceGroup = mFSG; Logger.Debug("Color device was added to the device"); break; }
                 case Types.SourceGroupType.FISHEYE: {_fisheyeSourceGroup = mFSG; Logger.Debug("Fisheye device was added to the device"); break;}
@@ -717,10 +719,21 @@ namespace SynchronicMediaCapture
         }
         public void Close()
         {
-            _mC?.Dispose();
+            Logger.Debug("Closing Device");
+            _mC?.Dispose();            
             _depthMC?.Dispose();
             _colorMC?.Dispose();
-            _fisheyeMC?.Dispose();            
+            _fisheyeMC?.Dispose();
+            foreach(var sensor in Sensors)
+            {
+                sensor?.Dispose();
+            }
+        }
+        public void Dispose()
+        {
+            Logger.Debug("Restarting Frame Server Service");
+            KillFrameServer();
+            //RestartFrameServer();
         }
         public List<Types.SensorInfo> GetSensors()
         {
@@ -1151,7 +1164,6 @@ namespace SynchronicMediaCapture
                 default: return Types.Sensors.UNKNOWN;
             }
         }
-
         private string ExtractVid(string fullId)
         {
             var parts = fullId.Split('_');
@@ -1195,6 +1207,47 @@ namespace SynchronicMediaCapture
                     return Types.SourceGroupType.UNKNOWN;
             }
         }
+        private void RestartFrameServer()
+        { 
+            string serviceName = "Windows Camera Frame Server";
+            Logger.Debug("Restarting Frame Server Service");
+            ServiceController serviceController = new ServiceController(serviceName);
+            try
+            {
+                if ((serviceController.Status.Equals(ServiceControllerStatus.Running)) || (serviceController.Status.Equals(ServiceControllerStatus.StartPending)))
+                {
+                    serviceController.Stop();
+                }
+                serviceController.WaitForStatus(ServiceControllerStatus.Stopped);
+                serviceController.Start();
+                serviceController.WaitForStatus(ServiceControllerStatus.Running);
+                Thread.Sleep(500);
+            }
+            catch (Exception e)
+            {
+                Logger.Error("Error when trying restarting windows service: " + e.Message);
+            }
+        }
+        private void KillFrameServer()
+        {
+            string serviceName = "Windows Camera Frame Server";
+            Logger.Debug("Killing Frame Server Service");
+            ServiceController serviceController = new ServiceController(serviceName);
+            try
+            {
+                if ((serviceController.Status.Equals(ServiceControllerStatus.Running)) || (serviceController.Status.Equals(ServiceControllerStatus.StartPending)))
+                {
+                    serviceController.Stop();
+                }
+                serviceController.WaitForStatus(ServiceControllerStatus.Stopped);
+                Thread.Sleep(500);
+            }
+            catch (Exception e)
+            {
+                Logger.Error("Error when trying Killing windows service: " + e.Message);
+            }
+        }
+
     }
 }
 

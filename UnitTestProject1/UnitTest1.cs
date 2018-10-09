@@ -36,6 +36,7 @@ namespace UnitTestProject1
                 d1.InitDevice(); // init device
                 d1.InitSensors(); // init device sensors
 
+                //var res = d1.SendCommand("frb 0 10");
                 d1.ResetCamera();
                 Thread.Sleep(5000);
 
@@ -272,14 +273,14 @@ namespace UnitTestProject1
                     ////set Get Example - depth controls
 
                     //sensors[0].SensorType = Types.Sensor.IR
-                    //sensors[0].Start();
-                    //sensors[1].Start();
+                    sensors[0].Start();
+                    sensors[1].Start();
                     sensors[2].Start();
 
                     Thread.Sleep(5000);
 
-                    //sensors[0].Stop();
-                    //sensors[1].Stop();
+                    sensors[0].Stop();
+                    sensors[1].Stop();
                     sensors[2].Stop();
                 }
             }
@@ -413,6 +414,22 @@ namespace UnitTestProject1
 
         }
         [TestMethod]
+        public void ForWaseem()
+        {
+            //For Waseem
+            ////00010133 
+            //byte[] resPvt = { 0x00, 0x01, 0x01, 0x33 };
+            //var resPvtHex = BitConverter.ToInt32(resPvt, 0).ToString("X");
+            //var valPvt = Convert.ToInt32(resPvtHex.Substring(2, 3), 16);
+            //var Final_Value = 1.6034 * Math.Pow(10, -11) * Math.Pow(valPvt, 4) + 1.5608 * Math.Pow(10, -8) * Math.Pow(valPvt, 3) - 1.5089 * Math.Pow(10, -4) * Math.Pow(valPvt, 2) + 3.3408 * Math.Pow(10, -1) * valPvt - 6.2861 * 10;
+
+
+            //byte[] resPvt = { 0x14, 0x00, 0x56, 0x0, 0x0, 0x0, 0x0, 0x0};
+            //var val = BitConverter.ToInt32(resPvt, 0);
+            //var valPvt = val & 0xff; //Take Only first 10 bits
+            //Final_Value = 1.6034 * Math.Pow(10, -11) * Math.Pow(valPvt, 4) + 1.5608 * Math.Pow(10, -8) * Math.Pow(valPvt, 3) - 1.5089 * Math.Pow(10, -4) * Math.Pow(valPvt, 2) + 3.3408 * Math.Pow(10, -1) * valPvt - 6.2861 * 10;
+        }
+        [TestMethod]
         public void TestStreamPerDevice()
         {
             Device d1 = null, d2 = null;
@@ -422,7 +439,7 @@ namespace UnitTestProject1
             DeviceManager dm2 = new DeviceManager();
             var devices2 = dm2.GetListOfConnectedDevices();
 
-
+            var ser = devices[0].GetSerial();
             if (devices.Count == 0)
                 return;
 
@@ -529,6 +546,52 @@ namespace UnitTestProject1
             d1.Close();
         }
 
+        [TestMethod]
+        public void MC_Test()
+        {
+            //find all source groups of all connected cameras
+            IReadOnlyList<MediaFrameSourceGroup> allGroups = null;
+            Task.Run(async () =>
+            {
+               // looking for Media Frame Source Groups
+                allGroups = await MediaFrameSourceGroup.FindAllAsync();
+            }).Wait();
+
+            MediaFrameSourceGroup sensorGroup = allGroups[0];
+
+            var mediaCaptureSettings = new MediaCaptureInitializationSettings()
+            {
+                SourceGroup = sensorGroup,
+                SharingMode = MediaCaptureSharingMode.ExclusiveControl,
+                MemoryPreference = MediaCaptureMemoryPreference.Cpu,
+                StreamingCaptureMode = StreamingCaptureMode.Video
+            };
+
+            MediaCapture mc = null;
+            //init Media Capture object   
+            Task.Run(async () =>
+            {
+                mc = new MediaCapture();
+                await mc?.InitializeAsync(mediaCaptureSettings);
+            }).Wait();
+
+            //XU 
+            var DepthAE = 11;
+            var DepthExposure = 3;
+            var ManualLaserPower = 4;
+            var value = 30;
+            mc.VideoDeviceController.SetDeviceProperty(string.Format("{0} {1}", Ds5_XU_GUID, DepthAE), BitConverter.GetBytes((1)));
+            mc.VideoDeviceController.SetDeviceProperty(string.Format("{0} {1}", Ds5_XU_GUID, DepthAE), BitConverter.GetBytes((0)));
+            mc.VideoDeviceController.SetDeviceProperty(string.Format("{0} {1}", Ds5_XU_GUID, DepthExposure), BitConverter.GetBytes((value)));
+            mc.VideoDeviceController.SetDeviceProperty(string.Format("{0} {1}", Ds5_XU_GUID, ManualLaserPower), BitConverter.GetBytes((150)));
+            
+
+            Console.WriteLine("");
+
+            mc?.Dispose();
+
+            Console.WriteLine("");
+        }
 
         const string Ds5_XU_GUID = "{C9606CCB-594C-4D25-AF47-CCC496435995}";
         /* =============== List Of All XU Controls ===============
@@ -604,9 +667,9 @@ namespace UnitTestProject1
 
         private void Color_FrameReader_FrameArrived(MediaFrameReader sender, MediaFrameArrivedEventArgs args)
         {
-            Logger.Debug("Color");
+            //Logger.Debug("Color");
             var frame = Types.ExtractFrameData(sender);
-            Logger.Debug(string.Format("Frame {0}\tTimestamp: {1}\tGain: {2}\tExposure: {3}", frame.FrameId, frame.hw_timeStamp, frame.GainLevel, frame.ActualExposure));
+            //Logger.Debug(string.Format("Frame {0}\tTimestamp: {1}\tGain: {2}\tExposure: {3}", frame.FrameId, frame.hw_timeStamp, frame.GainLevel, frame.ActualExposure));
         }
 
         private void IR_FrameReader_FrameArrived(MediaFrameReader sender, MediaFrameArrivedEventArgs args)
@@ -619,12 +682,12 @@ namespace UnitTestProject1
             var intelCaptureTimingMDBytes = properties.Where(x => x.Key.ToString().ToUpper() == intelCaptureTiming).First().Value;
             intelCaptureTimingMD = Types.ByteArrayToStructure<Types.REAL_SENSE_RS400_DEPTH_METADATA_INTEL_CAPTURE_TIMING>((byte[])intelCaptureTimingMDBytes);
             int id = (int)intelCaptureTimingMD.frameCounter;
-            Logger.Debug("IR Frame Arrived = " + id);
+            //Logger.Debug("IR Frame Arrived = " + id);
         }
         private void Depth_FrameReader_FrameArrived(MediaFrameReader sender, MediaFrameArrivedEventArgs args)
         {
             var frame = Types.ExtractFrameData(sender);
-            Logger.Debug(string.Format("Frame {0}\tTimestamp: {1}\tGain: {2}\tExposure: {3}", frame.FrameId, frame.hw_timeStamp, frame.GainLevel, frame.ActualExposure));
+            //Logger.Debug(string.Format("Frame {0}\tTimestamp: {1}\tGain: {2}\tExposure: {3}", frame.FrameId, frame.hw_timeStamp, frame.GainLevel, frame.ActualExposure));
             //var frame = sender.TryAcquireLatestFrame();
             //var fmt = frame.Format;
             //var intelCaptureTiming = "2BF10C23-BF48-4C54-B1F9-9BB19E70DB05";

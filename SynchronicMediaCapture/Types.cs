@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -13,17 +14,19 @@ namespace SynchronicMediaCapture
         public static Guid DS5_HW_TIME_STAMP_GUID = new Guid("D3C6ABAC-291A-4C75-9F47-D7B284A52619");
         public static Guid DS5_INTEL_CAPTURE_TIMING_GUID = new Guid("2BF10C23-BF48-4C54-B1F9-9BB19E70DB05");
         public static Guid DS5_INTEL_DEPTH_CONTROL_GUID = new Guid("482f9b07-3668-43fe-ad28-e3db3463bcb9");
+        public static Guid DS5_INTEL_COLOR_CONTROL_GUID = new Guid("8dcfd1f9-859c-4548-8bbe-40629d36d5b3");
+
 
         public struct REAL_SENSE_RS400_DEPTH_METADATA_INTEL_CAPTURE_TIMING
         {
-            public UInt32 version;
-            public UInt32 flag;
-            public UInt32 frameCounter;
-            public UInt32 opticalTimestamp;   //In millisecond unit
-            public UInt32 readoutTime;        //The readout time in millisecond second unit
-            public UInt32 exposureTime;       //The exposure time in millisecond second unit
-            public UInt32 frameInterval;     //The frame interval in millisecond second unit
-            public UInt32 pipeLatency;        //The latency between start of frame to frame ready in USB buffer
+            public Int32 version;
+            public Int32 flag;
+            public Int32 frameCounter;
+            public Int32 opticalTimestamp;   //In millisecond unit
+            public Int32 readoutTime;        //The readout time in millisecond second unit
+            public Int32 exposureTime;       //The exposure time in millisecond second unit
+            public Int32 frameInterval;     //The frame interval in millisecond second unit
+            public Int32 pipeLatency;        //The latency between start of frame to frame ready in USB buffer
         };
         public struct REAL_SENSE_RS400_DEPTH_METADATA_INTEL_DEPTH_CONTROL
         {
@@ -40,8 +43,27 @@ namespace SynchronicMediaCapture
             public UInt32 bottomExposureROI;
             public UInt32 preset;
         };
+        public struct REALSENSE_SAMPLE_RS400_COLOR_CONTROL_METADATA
+        {
+            public UInt32 version;
+            public UInt32 flag;
+            public UInt32 brightness;
+            public UInt32 contrast;
+            public UInt32 saturation;
+            public UInt32 sharpness;
+            public UInt32 auto_Exp_Mode;
+            public UInt32 auto_WB_Temp;
+            public UInt32 gain;
+            public UInt32 backlight_Comp;
+            public UInt32 gamma;
+            public UInt32 hue;
+            public UInt32 manual_Exp;
+            public UInt32 manual_WB;
+            public UInt32 powerLineFrequncy;
+            public UInt32 low_Light_Comp;
+        };
 
-        
+
         public enum LogLevel { DEBUG, WARNING, ERROR};
         public enum ControlType { STANDARD, XU, UNKNOWN};
         public enum ControlName { DEPTH_EXPOSURE, COLOR_EXPOSURE, DEPTH_AE, COLOR_AE, COLOR_EXP_PRIORITY, UNKNOWN};
@@ -196,11 +218,23 @@ namespace SynchronicMediaCapture
             public double x, y, z;
             public byte[] ActualData;
             public bool isDepthControlsMDAvailable;
+            public bool isColorControlsMDAvailable;
+            public bool isFEControlsMDAvailable;
             public int exposurePriority;
             public double ActualExposure;
             public int AutoExposure;
             public double GainLevel;
+
+            public double Brightness;
+            public double Contrast;
+            public double Saturation;
+            public double Sharpness;
+            public double BacklightComp;
+            public double Gamma;
+            public double Hue;
             public double WhiteBalance;
+            public double PowerLineFrequency;
+            public double LowLightComp;
         }
         public struct SensorInfo
         {
@@ -304,26 +338,32 @@ namespace SynchronicMediaCapture
         {
             var frame = sender.TryAcquireLatestFrame();
             Types.FrameData tempData = new Types.FrameData();
-            //var intelCaptureTiming = "2BF10C23-BF48-4C54-B1F9-9BB19E70DB05";
-            //var intelDepthControl = "482f9b07-3668-43fe-ad28-e3db3463bcb9";
-            //Guid HW_TimeStampGuid = new Guid("D3C6ABAC-291A-4C75-9F47-D7B284A52619");
-            Types.REAL_SENSE_RS400_DEPTH_METADATA_INTEL_CAPTURE_TIMING intelCaptureTimingMD = new Types.REAL_SENSE_RS400_DEPTH_METADATA_INTEL_CAPTURE_TIMING();
-            Types.REAL_SENSE_RS400_DEPTH_METADATA_INTEL_DEPTH_CONTROL intelDepthControlMD = new Types.REAL_SENSE_RS400_DEPTH_METADATA_INTEL_DEPTH_CONTROL();
+
+            Types.REAL_SENSE_RS400_DEPTH_METADATA_INTEL_CAPTURE_TIMING  intelCaptureTimingMD =  new Types.REAL_SENSE_RS400_DEPTH_METADATA_INTEL_CAPTURE_TIMING();
+            Types.REAL_SENSE_RS400_DEPTH_METADATA_INTEL_DEPTH_CONTROL   intelDepthControlMD =   new Types.REAL_SENSE_RS400_DEPTH_METADATA_INTEL_DEPTH_CONTROL();
+            Types.REALSENSE_SAMPLE_RS400_COLOR_CONTROL_METADATA         intelColorControlMD =   new Types.REALSENSE_SAMPLE_RS400_COLOR_CONTROL_METADATA();
             UInt32 HwTimeStamp = 0;
             Object temp;
+            Object intelCaptureTimingMDObject;
             var properties = frame.Properties;
-
+            
 
             // **************************************     Try getting Intel Capture Timing data  **************************************** 
             try
             {
-                var intelCaptureTimingMDBytes = properties.Where(x => x.Key == Types.DS5_INTEL_CAPTURE_TIMING_GUID).First().Value;
-                intelCaptureTimingMD = Types.ByteArrayToStructure<Types.REAL_SENSE_RS400_DEPTH_METADATA_INTEL_CAPTURE_TIMING>((byte[])intelCaptureTimingMDBytes);
+                //var intelCaptureTimingMDBytes = properties.Where(x => x.Key == Types.DS5_INTEL_CAPTURE_TIMING_GUID).First().Value;
+                //intelCaptureTimingMD = Types.ByteArrayToStructure<Types.REAL_SENSE_RS400_DEPTH_METADATA_INTEL_CAPTURE_TIMING>((byte[])intelCaptureTimingMDBytes);
+
+                if (properties.TryGetValue(Types.DS5_INTEL_CAPTURE_TIMING_GUID, out intelCaptureTimingMDObject) == false)
+                    throw new Exception("Getting IntelCaptureTiming Failed");
+                intelCaptureTimingMD = Types.ByteArrayToStructure<Types.REAL_SENSE_RS400_DEPTH_METADATA_INTEL_CAPTURE_TIMING>((byte[])intelCaptureTimingMDObject);
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
-                properties.TryGetValue(Types.DS5_HW_TIME_STAMP_GUID, out temp);
-                HwTimeStamp = (UInt32)temp;
+                Logger.Error("Getting intelCaptureTimingMDBytes Failed on: " + ex.Message);
+                
+                //Filling Fake fields into the IntelCaptureTiming struct
+                intelCaptureTimingMD.frameCounter = -1;
             }
 
 
@@ -333,7 +373,7 @@ namespace SynchronicMediaCapture
                 properties.TryGetValue(Types.DS5_HW_TIME_STAMP_GUID, out temp);
                 HwTimeStamp = (UInt32)temp;
             }
-            catch (Exception ex)
+            catch
             {
                 HwTimeStamp = 0;
             }
@@ -348,9 +388,24 @@ namespace SynchronicMediaCapture
                     tempData.isDepthControlsMDAvailable = true;
                 }
             }
-            catch (Exception ex)
+            catch
             {
                 Logger.Error("Failed On: Try getting Intel Depth Control data");
+            }
+
+            // **************************************     Try getting Intel Color Control data  **************************************** 
+            try
+            {
+                tempData.isColorControlsMDAvailable = false;
+                if (properties.TryGetValue(Types.DS5_INTEL_COLOR_CONTROL_GUID, out temp))
+                {
+                    intelColorControlMD = Types.ByteArrayToStructure<Types.REALSENSE_SAMPLE_RS400_COLOR_CONTROL_METADATA>((byte[])temp);
+                    tempData.isColorControlsMDAvailable = true;
+                }
+            }
+            catch
+            {
+                Logger.Error("Failed On: Try getting Intel Color Control data");
             }
 
             var systemTimeStamp = frame?.SystemRelativeTime.Value.TotalMilliseconds;
@@ -366,11 +421,30 @@ namespace SynchronicMediaCapture
             tempData.resolution = reso;
             tempData.frameRate = fps;
             tempData.sw_timeStamp = string.Format("{0}", systemTimeStamp);
-            tempData.hw_timeStamp = string.Format("{0}", HwTimeStamp);
-            tempData.ActualExposure = (int)intelDepthControlMD.manualExposure;
-            tempData.GainLevel = (int)intelDepthControlMD.gainLevel;
-            tempData.AutoExposure = (int)intelDepthControlMD.autoExposureMode;
-            tempData.exposurePriority = (int)intelDepthControlMD.exposurePriority;
+            tempData.hw_timeStamp = string.Format("{0}", HwTimeStamp);        
+
+            if(tempData.isDepthControlsMDAvailable)
+            {
+                tempData.ActualExposure =       (int)intelDepthControlMD.manualExposure;
+                tempData.GainLevel =            (int)intelDepthControlMD.gainLevel;
+                tempData.AutoExposure =         (int)intelDepthControlMD.autoExposureMode;
+                tempData.exposurePriority =     (int)intelDepthControlMD.exposurePriority;
+            }
+            else if(tempData.isColorControlsMDAvailable)
+            {
+                tempData.ActualExposure =       (int)intelColorControlMD.manual_Exp;
+                tempData.GainLevel =            (int)intelColorControlMD.gain;
+                tempData.AutoExposure =         (int)intelColorControlMD.auto_Exp_Mode == 8 ? 1 : 0;
+                tempData.Brightness =           (int)intelColorControlMD.brightness;
+                tempData.Contrast =             (int)intelColorControlMD.contrast;
+                tempData.Saturation =           (int)intelColorControlMD.saturation;
+                tempData.Sharpness =            (int)intelColorControlMD.sharpness;
+                tempData.BacklightComp =        (int)intelColorControlMD.backlight_Comp;
+                tempData.Gamma =                (int)intelColorControlMD.gamma;
+                tempData.Hue =                  (int)intelColorControlMD.hue;
+                tempData.PowerLineFrequency =   (int)intelColorControlMD.powerLineFrequncy;
+                tempData.LowLightComp =         (int)intelColorControlMD.low_Light_Comp;
+            }
             tempData.ActualData = null;//frame.BufferMediaFrame.Buffer.ToArray();
 
             frame.Dispose();
