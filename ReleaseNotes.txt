@@ -1,3 +1,6 @@
+Version 1.17.0.0
+	- Supporting New Sku's Names
+
 Version 1.16.7.5
 	- replacing Asic Seria with Optic Serial when calling Device.GetSerial() method
 
