@@ -86,7 +86,7 @@ namespace SynchronicMediaCapture
                 throw new Exception(errorMessage);
             }
 
-            Task.Run(async () =>
+             Task.Run(async() =>
             {
                 uint numerator, denominator;
                 if (ParseFrameRate(sC.FrameRate, sC.Format, (uint)sC.Width, (uint)sC.Height, out numerator, out denominator) == false)
@@ -95,16 +95,16 @@ namespace SynchronicMediaCapture
                     Logger.Error(errorMessage);
                     throw new Exception(errorMessage);
                 }
-          
+
                 switch (SensorType)
                 {
                     case Types.Sensor.Color: //=========================== Color ===========================
                         {
                             Logger.Debug("Getting Media Frame Source Kind Of Color Sensor");
                             mFSK = GetMediaFrameSourceKind(Types.Sensors.COLOR);
-                            break;                     
+                            break;
                         }
-                        
+
                     case Types.Sensor.Depth: //=========================== Depth ===========================
                         {
                             Logger.Debug("Getting Media Frame Source Kind Of Depth Sensor");
@@ -128,8 +128,8 @@ namespace SynchronicMediaCapture
 
                     default: break;
                 }
-
-                Logger.Debug("Trying GetMediaSourceInfoFromGroup() when source group is: " + _sG.DisplayName);                
+                Logger.Debug("GetMediaFrameSourceKind() Returned " + mFSK.ToString());
+                Logger.Debug("Trying GetMediaSourceInfoFromGroup() when source group is: " + _sG.DisplayName);
                 GetMediaSourceInfoFromGroup(_mC, _sG, mFSK, out mFS);
 
                 //Get Media Frame Format 
@@ -624,11 +624,13 @@ namespace SynchronicMediaCapture
 
             if (list.Count == 0)
             {
-                throw new Exception("Format is not supported");
+                Logger.Error("Format is not supported");
+                return false;
             }
 
             mediaFormat = list[0];
             await mediaSource.SetFormatAsync(mediaFormat);
+
             return true;
         }
         //=======================================================================================================================================================

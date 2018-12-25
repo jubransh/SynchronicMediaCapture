@@ -469,7 +469,6 @@ namespace UnitTestProject1
                 var ver = d1.GetFwVersion();
                 var serial = d1.GetSerial();
 
-
                 //Set Color Controls
                 bool res;
                 res = d1.SetControl(Types.GenericControl.EXPOSURE, Types.Sensor.Color, 0);

@@ -331,18 +331,24 @@ namespace SynchronicMediaCapture
 
                 //temporary
                 Array bigEndiansFwVer = new byte[4];
-                Array bigEndiansSerial = new byte[6];
+                Array bigEndiansOpticalSerial = new byte[6];
+                Array bigEndiansAsicSerial = new byte[6];
 
                 Array.Copy((byte[])res, 16, bigEndiansFwVer, 0, 4);
-                Array.Copy((byte[])res, 68, bigEndiansSerial, 0, 6);
+                Array.Copy((byte[])res, 52, bigEndiansOpticalSerial, 0, 6);
+                Array.Copy((byte[])res, 68, bigEndiansAsicSerial, 0, 6);
 
                 //reverse the endianity 
                 Array.Reverse(bigEndiansFwVer);
                 //Array.Reverse(bigEndiansSerial);
 
-                string resStr = string.Format("FW Version: {0}\nAsic Serial: {1}",
-                    BitConverter.ToString((byte[])bigEndiansFwVer),
-                    BitConverter.ToString((byte[])bigEndiansSerial)
+                string resStr = string.Format("FunctionalPayloadVersion: {0}\nAsicModuleSerial: {1}\nOpticModuleSerial: {2}",
+                    string.Join(" ", ((byte[])bigEndiansFwVer).Select(b => b.ToString())).Replace(" ","."),
+                    BitConverter.ToString((byte[])bigEndiansAsicSerial).Replace("-", ""),
+                    BitConverter.ToString((byte[])bigEndiansOpticalSerial).Replace("-","")
+
+                    //BitConverter.ToString((byte[])bigEndiansFwVer),
+                    //BitConverter.ToString((byte[])bigEndiansSerial)
                     );
 
                 //take the first 2 byte of the get to know if command passed

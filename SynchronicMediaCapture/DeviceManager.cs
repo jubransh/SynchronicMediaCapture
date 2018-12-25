@@ -109,9 +109,9 @@ namespace SynchronicMediaCapture
         private Types.SourceGroupType GetTypeOfSourceGroup(MediaFrameSourceGroup sG)
         {
             Logger.Debug(string.Format("Running  GetTypeOfSourceGroup() method on {0}", sG.DisplayName));
-            //
+            
             //check what is the type of the source group
-            switch (sG.DisplayName)
+            switch (sG.DisplayName.Replace("  "," "))
             {
                 case "Intel RS400 Cameras":
                     return Types.SourceGroupType.SHARED;
@@ -121,6 +121,7 @@ namespace SynchronicMediaCapture
 
                 //============================= D410 =================================
                 case "Intel(R) RealSense(TM) 410 Depth":
+                case "Intel(R) RealSense(TM) Depth Camera 410 Depth":
                 case "Intel(R) RealSense(TM) Depth Module D410 Depth":
 
                 //============================= D415 =================================
@@ -131,13 +132,16 @@ namespace SynchronicMediaCapture
 
                 //============================= D420 =================================
                 case "Intel(R) RealSense(TM) 420 Depth":
+                case "Intel(R) RealSense(TM) Depth Camera 420 Depth":
                 case "Intel(R) RealSense(TM) Depth Module D420 Depth":
                 case "Intel(R) RealSense(TM) 420 with Tracking Module Depth":
 
-                //============================= D430 =================================
+                //======================2======= D430 =================================
                 case "Intel(R) RealSense(TM) 430 Depth":
                 case "Intel(R) RealSense(TM) 430 with RGB Module Depth":
                 case "Intel(R) RealSense(TM) Depth Module D430 Depth":
+                case "Intel(R) RealSense(TM) Depth Camera D430 Depth":
+                case "Intel(R) RealSense(TM) Depth Camera 430 Depth":
 
                 //============================= D435 =================================
                 case "Intel(R) RealSense(TM) 435 with RGB Module Depth":

@@ -1,3 +1,34 @@
+Version 1.18.0.0
+	Bug Fix:
+		- Init Device Failed on locked camera https://rsjira.intel.com/browse/DSO-11675
+	Features:
+		- Expanding the GVD string to include the Optical Serial Number 
+		- Supporting new Cameras Names: 
+			* Intel(R) RealSense(TM) Depth Camera 410 Depth
+			* Intel(R) RealSense(TM) Depth Camera 420 Depth
+			* Intel(R) RealSense(TM) Depth Camera D430 Depth
+			* Intel(R) RealSense(TM) Depth Camera 430 Depth
+			
+Version 1.17.5.0
+	Bug Fix:
+		- Intel RS400 (Shared Sensor Group) - not working
+	Features:
+		- Added more info to the log when setting profile fail
+
+Version 1.17.4.0
+	Supporting additional SKU that was missed before:
+
+Version 1.17.3.0
+	Supporting additional SKU that was missed before:
+		Intel(R) RealSense(TM) Depth Camera 430 Depth 
+		Intel(R) RealSense(TM) Depth Camera 420 Depth 
+
+Version 1.17.2.0
+	- Supporting additional SKU that was missed before (AWG)
+
+Version 1.17.1.0
+	- Supporting additional SKU that was missed before (ASR)
+
 Version 1.17.0.0
 	- Supporting New Sku's Names
 

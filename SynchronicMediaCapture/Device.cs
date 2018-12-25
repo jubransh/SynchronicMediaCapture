@@ -25,7 +25,7 @@ namespace SynchronicMediaCapture
         int depthIndex;
         int iRIndex;
         int fisheyeIndex;
-        CommandResult gvdData;
+        XUCommandRes gvdData;
         string xmlLocation;
 
 
@@ -320,7 +320,8 @@ namespace SynchronicMediaCapture
             if (_selectedGroup.DisplayName.ToLower().Contains("intel"))
             {
                 Logger.Debug("Getting Device Version Data GVD");
-                gvdData = SendCommand("gvd");
+                gvdData = _CameraProperty.SendCommand("gvd", null);
+                //gvdData = SendCommand("gvd");
             }
             Logger.PrintTitle("");
         }
@@ -660,26 +661,41 @@ namespace SynchronicMediaCapture
             if (gvdData == null)
                 return "N/A";
 
-            var rows = gvdData.FormatedString.Split('\n');
 
-            //if (res.IsCompletedOk == false)
-            //{
-            //    Logger.Error("GVD command was not completed ok");
-            //    return "N/A";
-            //}
-            //var rows = res.StringResult.Split('\n');
+            var rows = gvdData.StringResult.Split('\n');
             var serialKey = key;
             foreach (var item in rows)
             {
                 if (item.ToLower().StartsWith(serialKey.ToLower()))
                 {
-                    Logger.Debug(string.Format("Returned {0} is: {1}",key, item));
+                    Logger.Debug(string.Format("Returned {0} is: {1}", key, item));
                     Logger.PrintTitle();
                     return item.Replace(serialKey, "").Replace("-", "").Replace(" ", "");
                 }
             }
             Logger.Debug("key not found into the returned data from GVD command");
             Logger.PrintTitle();
+
+            //var rows = gvdData.FormatedString.Split('\n');
+
+            ////if (res.IsCompletedOk == false)
+            ////{
+            ////    Logger.Error("GVD command was not completed ok");
+            ////    return "N/A";
+            ////}
+            ////var rows = res.StringResult.Split('\n');
+            //var serialKey = key;
+            //foreach (var item in rows)
+            //{
+            //    if (item.ToLower().StartsWith(serialKey.ToLower()))
+            //    {
+            //        Logger.Debug(string.Format("Returned {0} is: {1}",key, item));
+            //        Logger.PrintTitle();
+            //        return item.Replace(serialKey, "").Replace("-", "").Replace(" ", "");
+            //    }
+            //}
+            //Logger.Debug("key not found into the returned data from GVD command");
+            //Logger.PrintTitle();
             return "N/A";
 
         }
@@ -780,11 +796,35 @@ namespace SynchronicMediaCapture
         public CommandResult SendCommand(/*string xmlLocation,*/ string command)
         {
             var DS5GUID = "08090549CE7841DCA0FB1BD66694BB0C";
+            var DS5_XU_GUID = new Guid("C9606CCB-594C-4D25-AF47-CCC496435995");
             Guid guid = new Guid(DS5GUID);
-            var winUSBDevice = new HWMonitorDevice(VID, PID, guid, 1); //setting of the command.. like Sam's code
+            HWMonitorDevice hwMonitorDevice = null;
+            //Try Via WinUSB first (if camera is locked will create HWMonitor via XU
+            try
+            {
+                Logger.Debug("Trying to create HWMonitorDevice via WinUSB pipe");
+                hwMonitorDevice = new HWMonitorDevice(VID, PID, guid, 1); //setting of the command..
+                Logger.Debug("Creating HWMonitorDevice via WinUSB WinUsb Completed");
+            }
+            catch
+            {
+                Logger.Warning("Creating HWMonitorDevice via WinUSB pipe Failed [Device may be locked]");
+                Logger.Debug("Trying to create HWMonitorDevice via UVC XU");
+                hwMonitorDevice = new HWMonitorDevice(VID, PID, "0", DS5_XU_GUID, 1, 1);
+                Logger.Debug("Creating HWMonitorDevice via WinUSB UVC XU Completed");
+            }
             var xml_path = Path.Combine(xmlLocation, "CommandsDS5.xml");
             var parser = new CommandsXmlParser(xml_path); //the xml file where you find all commands availble
-            return parser.SendCommand(winUSBDevice, command); //insert the HW command, the same as typing in the Terminal
+            try
+            {
+                return parser.SendCommand(hwMonitorDevice, command); //insert the HW command, the same as typing in the Terminal
+            }
+            catch(Exception ex)
+            {
+                var errorMsg = string.Format("Sending {0} Command was Failed on {1}", command, ex.Message);
+                Logger.Error(errorMsg);
+                throw new Exception(errorMsg);
+            }
         }
 
         //==========================================================================================================================================
